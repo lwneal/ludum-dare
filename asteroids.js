@@ -150,14 +150,14 @@ function calculateGravityCenter() {
   return gravity;
 }
 
-var gravitate = function(obj, c) {
+var gravitate = function(obj, c, scale) {
   var dx = obj.mesh.position.x - c.x;
   var dy = obj.mesh.position.y - c.y;
   var dz = obj.mesh.position.z - c.z;
 
-  obj.vx += 1 / (dx*dx);
-  obj.vy += 1 / (dy*dy);
-  obj.vz += 1 / (dz*dz);
+  obj.vx += 1 / (dx*dx) * scale;
+  obj.vy += 1 / (dy*dy) * scale;
+  obj.vz += 1 / (dz*dz) * scale;
 };
 
 var Asteroid = (function() {
