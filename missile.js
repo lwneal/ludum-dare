@@ -77,6 +77,20 @@ function Missile(friendly) {
     forward.multiplyScalar(scale * 25.0);
     this.mesh.position.add(forward);
 
+
+    // Check for collisions
+    var objs = collisions(this);
+    _.each(objs, function(o) {
+      if (o.type() == "asteroid") {
+        this.remove();
+      }
+    });
+
     //this.particles.update(scale);
+  };
+
+  this.remove = function() {
+    scene.remove(this.mesh);
+    missiles = _.without(missiles, this);
   };
 }
