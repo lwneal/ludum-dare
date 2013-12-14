@@ -153,7 +153,6 @@ function init() {
   scene.add( mesh );
 
   /// STARS
-  // stars
 
   var radius = 100;
   var i, r = radius, starsGeometry = [ new THREE.Geometry(), new THREE.Geometry() ];
