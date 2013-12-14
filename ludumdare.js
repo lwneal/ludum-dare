@@ -15,7 +15,8 @@ var player_ship_mesh;
 var clock = new THREE.Clock();
 
 var asteroids = [];
-var GRAVITATIONAL_CONSTANT = 0.01;
+var missiles = [];
+var GRAVITATIONAL_CONSTANT = 0.10;
 var PLANE_ATTRACTION_COEFF = 40;
 var TOP = 100;
 var BOTTOM = -100;
@@ -121,12 +122,13 @@ function init() {
   loader.load("assets/ast1.js", Assets.asset("ast1"));
   loader.load("assets/player_ship.js", Assets.asset("player_ship"));
   loader.load("assets/target_ship.js", Assets.asset("target_ship"));
+  loader.load("assets/missile.js", Assets.asset("missile"));
 
   Assets.callback = function() {
     Asteroid.init();
 
-    var m = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshLambertMaterial({color: 0xFF0000}));
-    m.scale.set(1, 1, 1);
+    var m = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshLambertMaterial({color: 0x0080FF, ambient: 0x004080}));
+    m.scale.set(5, 5, 5);
     scene.add(m);
     player_ship_mesh = m;
 
@@ -137,6 +139,8 @@ function init() {
     player_ship_mesh.add(camera);
 
     TargetEnemy.init("target_ship");
+
+    missiles.push(new Missile(true));
 
     window.addEventListener( 'resize', onWindowResize, false );
 
@@ -224,6 +228,9 @@ function animate(timestamp) {
 
   Asteroid.update(scale);
   TargetEnemy.update(scale);
+  _.each(missiles, function(m) {
+    m.update(scale);
+  });
 
   //updateQuadtree();
 
