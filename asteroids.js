@@ -11,14 +11,14 @@ function vecDistanceSq(a, b) {
 
 function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial());
-  this.r = rand(50, 100) * Math.random() * Math.random() * Math.random() / 2;
+  this.r = rand(50, 100) * Math.random() * Math.random();
   this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
-  this.mesh.position.x = (Math.random() - 0.5) * 1000;
-  this.mesh.position.y = (Math.random() - 0.5) * 100;
-  this.mesh.position.z = (Math.random() - 0.5) * 1000;
-  this.vx = (Math.random() - 0.5) + 0.00 * this.mesh.position.z;
-  this.vy = (Math.random() - 0.5) * .01;
-  this.vz = (Math.random() - 0.5) - 0.00 * this.mesh.position.x;
+  this.mesh.position.x = rand(BOUNDS.x, BOUNDS.x + BOUNDS.width);
+  this.mesh.position.y = rand(BOTTOM, TOP);
+  this.mesh.position.z = rand(BOUNDS.y, BOUNDS.y + BOUNDS.height);
+  this.vx = (Math.random() - 0.5) + 0.20 * this.mesh.position.z;
+  this.vy = (Math.random() - 0.5) * .1;
+  this.vz = (Math.random() - 0.5) - 0.20 * this.mesh.position.x;
 
   this.rvx = (Math.random() - 0.5) * 0.1;
   this.rvy = (Math.random() - 0.5) * 0.1;
@@ -198,7 +198,7 @@ var Asteroid = (function() {
 
     for (var i = 0; i < asteroids.length; i++) {
       var ast = asteroids[i];
-      gravitate(ast, gravity);
+      //gravitate(ast, gravity);
       asteroidMove(ast, scale);
     }
   }

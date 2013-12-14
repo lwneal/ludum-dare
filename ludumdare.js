@@ -15,7 +15,7 @@ var player_ship_mesh;
 var clock = new THREE.Clock();
 
 var asteroids = [];
-var GRAVITATIONAL_CONSTANT = 0.10;
+var GRAVITATIONAL_CONSTANT = 0.01;
 var PLANE_ATTRACTION_COEFF = 40;
 var TOP = 100;
 var BOTTOM = -100;
@@ -225,20 +225,24 @@ function animate(timestamp) {
   Asteroid.update(scale);
   TargetEnemy.update(scale);
 
-  updateQuadtree();
+  //updateQuadtree();
 
   // Check for collisions
-  for (i in asteroids) {
+  for (var i = 0; i < asteroids.length; i++) {
     var ast = asteroids[i];
-    var others = quadtree.retrieve(ast.bounds);
+    //var others = quadtree.retrieve(ast.bounds);
 
+    for (var j = i + 1; j < asteroids.length; j++) {
+      asteroidInteract(ast, asteroids[j], scale);
+    }
+    /*
     for (j in others) {
       var other_bounds = others[j];
       var other_ast = other_bounds.obj;
       if (other_ast == ast) continue;
 
-      asteroidInteract(ast, other_ast, scale);
     }
+    */
   }
 
   render();
