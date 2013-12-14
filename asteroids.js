@@ -35,11 +35,13 @@ function asteroid() {
   this.planeMesh.rotateOnAxis(new THREE.Vector3(-1, 0, 0), Math.PI / 2);
   scene.add(this.planeMesh);
 
+  /*
   var boxMat = new THREE.MeshBasicMaterial({
     wireframe: true
   });
   this.boxMesh = new THREE.Mesh(new THREE.CubeGeometry(this.r*2, this.r*2, this.r*2), boxMat);
   scene.add(this.boxMesh);
+  */
 
   this.bounds = {obj: this};
   this.type = function() { return "asteroid"; };
@@ -62,9 +64,12 @@ function updateBounds(ast) {
     ast.planeMesh.material.color.setHex(0x444444);
   }
 
-  ast.boxMesh.position.set(ast.mesh.position.x, ast.mesh.position.y, ast.mesh.position.z);
+  //ast.boxMesh.position.set(ast.mesh.position.x, ast.mesh.position.y, ast.mesh.position.z);
 };
 
+var axx = new THREE.Vector3(1, 0, 0);
+var axy = new THREE.Vector3(0, 1, 0);
+var axz = new THREE.Vector3(0, 0, 1);
 function asteroidMove(ast, scale) {
   var forward = new THREE.Vector3(ast.vx, ast.vy, ast.vz);
   forward.multiplyScalar(scale);
@@ -82,15 +87,12 @@ function asteroidMove(ast, scale) {
 
   // Keep things close to the xz plane
   if (ast.mesh.position.y > 0) {
-    ast.vy -= PLANE_ATTRACTION_COEFF * scale;
+    ast.mesh.position.y -= PLANE_ATTRACTION_COEFF * scale;
   } else {
-    ast.vy += PLANE_ATTRACTION_COEFF * scale;
+    ast.mesh.position.y += PLANE_ATTRACTION_COEFF * scale;
   }
 
   // rotate around!
-  var axx = new THREE.Vector3(1, 0, 0);
-  var axy = new THREE.Vector3(0, 1, 0);
-  var axz = new THREE.Vector3(0, 0, 1);
   ast.mesh.rotateOnAxis(axx, ast.rvx * scale);
   ast.mesh.rotateOnAxis(axy, ast.rvy * scale);
   ast.mesh.rotateOnAxis(axz, ast.rvz * scale);
@@ -141,14 +143,14 @@ var gravitate = function(obj, c) {
   var dy = obj.mesh.position.y - c.y;
   var dz = obj.mesh.position.z - c.z;
 
-  obj.vx -= dx * .001;
-  obj.vy -= dy * .001;
-  obj.vz -= dz * .001;
+  obj.vx -= .1 / (dx*dx);
+  obj.vy -= .1 / (dy*dy);
+  obj.vz -= .1 / (dz*dz);
 };
 
 var Asteroid = (function() {
   var init = function(geom_name) {
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < 1000; i++) {
       asteroids.push(new asteroid());
     }
   };

@@ -28,27 +28,6 @@ function init() {
 
   scene = new THREE.Scene();
 
-  // uniforms
-
-  var shader = THREE.ShaderLib[ "normalmap" ];
-  var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
-  uniforms[ "uDiffuseColor" ].value.setHex( 0xffffff );
-  uniforms[ "uSpecularColor" ].value.setHex( 0x333333 );
-  uniforms[ "uAmbientColor" ].value.setHex( 0x000000 );
-
-  var parameters = {
-    fragmentShader: shader.fragmentShader,
-    vertexShader: shader.vertexShader,
-    uniforms: uniforms,
-    lights: true,
-    fog: true
-  };
-
-
-  var texture = THREE.ImageUtils.loadTexture('asteroid.jpg');
-  texture.magFilter = THREE.NearestFilter;
-  texture.minFilter = THREE.LinearMipMapLinearFilter;
-
   /// STARS
 
   var radius = 100;
