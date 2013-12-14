@@ -140,22 +140,6 @@ function init() {
 
   Assets.callback = function() {
     console.log("All assets loaded");
-
-    var rand = function(min, max) {
-      return min + (Math.random() * (max - min));
-    };
-
-    var makeAsteroid = function(geometry) {
-      var a = {};
-      a.mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
-      a.mesh.scale.set(100, 100, 100);
-      a.mesh.position.x = (Math.random() - 0.5) * 10000;
-      a.mesh.position.y = (Math.random() - 0.5) * 10000;
-      a.mesh.position.z = (Math.random() - 0.5) * 10000;
-      scene.add(a.mesh);
-      asteroids.push(a);
-    };
-
     // Load some sample meshes
     for (var i = 0; i < 10; i++) {
       makeAsteroid(Assets.get("ast1"));
@@ -191,12 +175,40 @@ function onWindowResize() {
 
 // RENDER LOOP
 
+var rand = function(min, max) {
+  return min + (Math.random() * (max - min));
+};
+
+var makeAsteroid = function(geometry) {
+  var a = {};
+  a.mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
+  a.mesh.scale.set(100, 100, 100);
+  a.mesh.position.x = (Math.random() - 0.5) * 10000;
+  a.mesh.position.y = (Math.random() - 0.5) * 10000;
+  a.mesh.position.z = (Math.random() - 0.5) * 10000;
+  a.vx = (Math.random() - 0.5) * 1;
+  a.vy = (Math.random() - 0.5) * 1;
+  a.vz = (Math.random() - 0.5) * 1;
+  scene.add(a.mesh);
+  asteroids.push(a);
+};
+
 function moveAsteroids(scale) {
   for (i in asteroids) {
     var a = asteroids[i];
-    var forward = new THREE.Vector3(0, 0, -1);
-    forward.multiplyScalar(scale * 3000.0);
+
+    var forward = new THREE.Vector3(a.vx, a.vy, a.vz);
+    forward.multiplyScalar(scale);
     a.mesh.position.add(forward);
+
+    // acceleration of some sort?
+    a.vx += (player_ship_mesh.position.x - a.mesh.position.x) / 100;
+    a.vy += (player_ship_mesh.position.y - a.mesh.position.y) / 100;
+    a.vz += (player_ship_mesh.position.z - a.mesh.position.z) / 100;
+
+    a.vx += rand(-100,100);
+    a.vy += rand(-100,100);
+    a.vz += rand(-1,1);
   }
 };
 
