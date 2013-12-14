@@ -1,4 +1,4 @@
-var ASTEROID_RADIUS = 100*100;
+var ASTEROID_RADIUS = 100*100*2;
 
 function rand(min, max) {
   return min + (Math.random() * (max - min));
@@ -13,19 +13,20 @@ function vecDistanceSq(a, b) {
 
 function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial());
-  this.mesh.scale.set(100, 100, 100);
+  this.r = rand(1, 1000) * Math.random() * Math.random() * Math.random();
+  this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
   this.mesh.position.x = (Math.random() - 0.5) * 10000;
-  this.mesh.position.y = (Math.random() - 0.5) * 10000;
+  this.mesh.position.y = (Math.random() - 0.5) * 1000;
   this.mesh.position.z = (Math.random() - 0.5) * 10000;
-  this.vx = (Math.random() - 0.5) * 1;
-  this.vy = (Math.random() - 0.5) * 1;
-  this.vz = (Math.random() - 0.5) * 1;
+  this.vx = (Math.random() - 0.5) * 1000;
+  this.vy = (Math.random() - 0.5) * 100;
+  this.vz = (Math.random() - 0.5) * 1000;
   scene.add(this.mesh);
 };
 
 var Asteroid = (function() {
   var init = function(geom_name) {
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 90; i++) {
       asteroids.push(new asteroid());
     }
   };
@@ -37,11 +38,6 @@ var Asteroid = (function() {
       forward.multiplyScalar(scale);
       ast.mesh.position.add(forward);
 
-      // follow the player
-      ast.vx += (player_ship_mesh.position.x - ast.mesh.position.x) / 100;
-      ast.vy += (player_ship_mesh.position.y - ast.mesh.position.y) / 100;
-      ast.vz += (player_ship_mesh.position.z - ast.mesh.position.z) / 100;
-
       // wobble
       ast.vx += rand(-1,1);
       ast.vy += rand(-1,1);
@@ -52,13 +48,32 @@ var Asteroid = (function() {
       ast.vy *= 0.999;
       ast.vz *= 0.999;
 
+      // Keep things close to the xz plane
+      ast.vy -= 0.001 * ast.mesh.position.y;
+
       // lol collision detection
       for (var j = i + 1; j < asteroids.length; j++) {
         var bst = asteroids[j];
-        if (vecDistanceSq(ast.mesh.position, bst.mesh.position) < ASTEROID_RADIUS) {
+
+        // gravitation
+
+        var dx = (bst.mesh.position.x - ast.mesh.position.x);
+        var dy = (bst.mesh.position.y - ast.mesh.position.y);
+        var dz = (bst.mesh.position.z - ast.mesh.position.z);
+
+        var distSq = dx*dx + dy*dy + dz*dz;
+        bst.vx -= (dx / distSq) * 100;
+        bst.vy -= (dy / distSq) * 100;
+        bst.vz -= (dz / distSq) * 100;
+
+        if (vecDistanceSq(ast.mesh.position, bst.mesh.position) < ast.r*ast.r + bst.r*bst.r) {
           ast.vx += ast.mesh.position.x - bst.mesh.position.x;
           ast.vy += ast.mesh.position.y - bst.mesh.position.y;
           ast.vz += ast.mesh.position.z - bst.mesh.position.z;
+
+          bst.vx -= ast.mesh.position.x - bst.mesh.position.x;
+          bst.vy -= ast.mesh.position.y - bst.mesh.position.y;
+          bst.vz -= ast.mesh.position.z - bst.mesh.position.z;
         }
       }
 
