@@ -3,11 +3,12 @@ if ( ! Detector.webgl ) {
   document.getElementById( 'container' ).innerHTML = "The game is running!";
 }
 
-var container, stats;
+var container, stats, keyboard;
 
 var camera, controls, scene, renderer;
 
 var mesh;
+var player_ship_mesh;
 
 var clock = new THREE.Clock();
 
@@ -20,14 +21,7 @@ function init() {
 
   container = document.getElementById( 'container' );
 
-  camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
-  camera.position.x = -500;
-
-  controls = new THREE.FirstPersonControls( camera );
-
-  controls.movementSpeed = 1000;
-  controls.lookSpeed = 0.125;
-  controls.lookVertical = true;
+  keyboard = new THREEx.KeyboardState();
 
   scene = new THREE.Scene();
 
@@ -150,7 +144,14 @@ function init() {
     m.scale.set(10, 10, 10);
     m.position.z = 10;
     scene.add(m);
+    player_ship_mesh = m;
+
+    camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
+    camera.position.z = 50;
+    camera.position.y = 25;
+    player_ship_mesh.add(camera);
   });
+
 
   window.addEventListener( 'resize', onWindowResize, false );
 
@@ -163,8 +164,6 @@ function onWindowResize() {
 
   renderer.setSize( window.innerWidth, window.innerHeight );
 
-  controls.handleResize();
-
 }
 
 // RENDER LOOP
@@ -173,6 +172,10 @@ function animate() {
 
   requestAnimationFrame( animate );
 
+  if (keyboard.pressed('S')) {
+    player_ship_mesh.position.z += 5;
+  }
+
   render();
   stats.update();
 
@@ -180,7 +183,6 @@ function animate() {
 
 function render() {
 
-  controls.update( clock.getDelta() );
   renderer.render( scene, camera );
 
 }
