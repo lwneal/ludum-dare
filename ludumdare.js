@@ -177,11 +177,13 @@ function animate() {
     player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), -0.01);
   }
 
+  var ship_forward = new THREE.Vector3(0, 0, -1);
+  ship_forward.applyQuaternion(player_ship_mesh.quaternion);
   if (keyboard.pressed('W')) {
-    player_ship_mesh.position.z -= 5;
+    player_ship_mesh.position.add(ship_forward);
   }
   if (keyboard.pressed('S')) {
-    player_ship_mesh.position.z += 5;
+    player_ship_mesh.position.add(ship_forward.negate());
   }
 
   render();
