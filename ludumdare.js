@@ -213,14 +213,26 @@ function animate(timestamp) {
 
   updateQuadtree();
 
+  for (i in asteroids) {
+    var ast = asteroids[i];
+    ast.mesh.material.color.setHex(0xFFFFFF);
+  }
+
   // Check for collisions
   for (i in asteroids) {
     var ast = asteroids[i];
     var others = quadtree.retrieve(ast.bounds);
+      console.log(others.length);
     for (j in others) {
       var other_bounds = others[j];
       var other_ast = other_bounds.obj;
       if (other_ast == ast) continue;
+
+      asteroidInteract(ast, other_ast, scale);
+      ast.mesh.material.color.setHex(0xFF0000);
+      other_ast.mesh.material.color.setHex(0xFF0000);
+
+      /*
       //var diff = new THREE.Vector3(ast.mesh.position);
       //diff.sub(other_ast.mesh.position);
       var diff = new THREE.Vector3().subVectors(ast.mesh.position, other_ast.mesh.position);
@@ -234,6 +246,7 @@ function animate(timestamp) {
         ast.mesh.material.color.setHex(0xFFFFFF);
         other_ast.mesh.material.color.setHex(0xFFFFFF);
       }
+      */
     }
   }
 

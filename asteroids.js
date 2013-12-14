@@ -1,4 +1,4 @@
-var GRAVITATIONAL_CONSTANT = 0.50;
+var GRAVITATIONAL_CONSTANT = 0.90;
 var PLANE_ATTRACTION_COEFF = 40;
 
 function rand(min, max) {
@@ -14,8 +14,8 @@ function vecDistanceSq(a, b) {
 
 function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial());
-  this.r = rand(1, 1000) * Math.random() * Math.random() * Math.random() * 10;
-  this.mesh.scale.set(1 * this.r / 10, 1 *this.r / 10, 1 * this.r / 10);
+  this.r = rand(1, 100) * Math.random() * Math.random() * Math.random();
+  this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
   this.mesh.position.x = (Math.random() - 0.5) * 10000;
   this.mesh.position.y = (Math.random() - 0.5) * 1000;
   this.mesh.position.z = (Math.random() - 0.5) * 10000;
@@ -35,10 +35,11 @@ function asteroid() {
   this.bounds = {obj: this};
   self = this;
   this.updateBounds = function() {
-    self.bounds.x = self.mesh.position.x - self.r;
-    self.bounds.y = self.mesh.position.z - self.r;
-    self.bounds.width = 2 * self.r;
-    self.bounds.height = 2 * self.r;
+    var boundsSize = 0.1;
+    self.bounds.x = self.mesh.position.x - self.r * boundsSize;
+    self.bounds.y = self.mesh.position.z - self.r * boundsSize;
+    self.bounds.width = 2 * self.r * boundsSize;
+    self.bounds.height = 2 * self.r * boundsSize;
     self.obj = self;
 
     self.planeMesh.position.x = self.mesh.position.x;
@@ -58,9 +59,9 @@ function asteroidMove(ast, scale) {
   ast.vz += rand(-1,1) * scale;
 
   // dampen
-  ast.vx *= 0.999;
-  ast.vy *= 0.999;
-  ast.vz *= 0.999;
+  ast.vx *= 0.99;
+  ast.vy *= 0.99;
+  ast.vz *= 0.99;
 
   // Keep things close to the xz plane
   if (ast.mesh.position.y > 0) {
@@ -104,7 +105,7 @@ function asteroidInteract(ast, bst, scale) {
 
 var Asteroid = (function() {
   var init = function(geom_name) {
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < 1000; i++) {
       asteroids.push(new asteroid());
     }
   };
@@ -114,14 +115,6 @@ var Asteroid = (function() {
       var ast = asteroids[i];
       asteroidMove(ast, scale);
       ast.updateBounds();
-
-      // lol collision detection
-      for (var j = 0; j < asteroids.length; j++) {
-        if (i == j) continue;
-        var bst = asteroids[j];
-        asteroidInteract(ast, bst, scale);
-      }
-
     }
   }
 
