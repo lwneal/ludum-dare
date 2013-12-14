@@ -140,26 +140,7 @@ function init() {
   loader.load("assets/target_ship.js", Assets.asset("target_ship"));
 
   Assets.callback = function() {
-    console.log("All assets loaded");
-
-    var rand = function(min, max) {
-      return min + (Math.random() * (max - min));
-    };
-
-    var makeAsteroid = function(geometry) {
-      var m = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xFFFFFF}));
-      m.scale.set(100, 100, 100);
-      m.position.x = (Math.random() - 0.5) * 10000;
-      m.position.y = (Math.random() - 0.5) * 10000;
-      m.position.z = (Math.random() - 0.5) * 10000;
-      scene.add(m);
-      asteroids.push(m);
-    };
-
-    // Load some sample meshes
-    for (var i = 0; i < 1000; i++) {
-      makeAsteroid(Assets.get("ast1"));
-    }
+    Asteroid.init();
 
     var m = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshLambertMaterial({color: 0xFF0000}));
     m.scale.set(10, 10, 10);
@@ -192,15 +173,6 @@ function onWindowResize() {
 }
 
 // RENDER LOOP
-
-function moveAsteroids(scale) {
-  for (a in asteroids) {
-    a.x += a.vx * scale;
-    a.y += a.vy * scale;
-    a.z += a.vz * scale;
-  }
-};
-
 var last_time = null;
 function animate(timestamp) {
 
@@ -228,7 +200,7 @@ function animate(timestamp) {
     player_ship_mesh.position.add(ship_forward.negate());
   }
 
-  moveAsteroids(scale);
+  Asteroid.update(scale);
   TargetEnemy.update(scale);
 
   render();
