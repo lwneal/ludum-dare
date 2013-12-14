@@ -16,8 +16,12 @@ var clock = new THREE.Clock();
 
 var asteroids = [];
 var missiles = [];
-var bounds = {x: -10000, y: -10000, width: 20000, height: 20000};
-var quadtree = new Quadtree(bounds);
+var GRAVITATIONAL_CONSTANT = 0.10;
+var PLANE_ATTRACTION_COEFF = 40;
+var TOP = 100;
+var BOTTOM = -100;
+var BOUNDS = {x: -1000, y: -1000, width: 2000, height: 2000};
+var quadtree = new Quadtree(BOUNDS);
 
 init();
 
@@ -28,27 +32,6 @@ function init() {
   keyboard = new THREEx.KeyboardState();
 
   scene = new THREE.Scene();
-
-  // uniforms
-
-  var shader = THREE.ShaderLib[ "normalmap" ];
-  var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
-  uniforms[ "uDiffuseColor" ].value.setHex( 0xffffff );
-  uniforms[ "uSpecularColor" ].value.setHex( 0x333333 );
-  uniforms[ "uAmbientColor" ].value.setHex( 0x000000 );
-
-  var parameters = {
-    fragmentShader: shader.fragmentShader,
-    vertexShader: shader.vertexShader,
-    uniforms: uniforms,
-    lights: true,
-    fog: true
-  };
-
-
-  var texture = THREE.ImageUtils.loadTexture('asteroid.jpg');
-  texture.magFilter = THREE.NearestFilter;
-  texture.minFilter = THREE.LinearMipMapLinearFilter;
 
   /// STARS
 
@@ -219,6 +202,18 @@ function animate(timestamp) {
   if (keyboard.pressed('D')) {
     player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), -1.0 * scale);
   }
+  if (keyboard.pressed('Q')) {
+    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), 1.0 * scale);
+  }
+  if (keyboard.pressed('E')) {
+    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), -1.0 * scale);
+  }
+  if (keyboard.pressed('R')) {
+    player_ship_mesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), 1.0 * scale);
+  }
+  if (keyboard.pressed('F')) {
+    player_ship_mesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), -1.0 * scale);
+  }
 
   var ship_forward = new THREE.Vector3(0, 0, -1);
   ship_forward.applyQuaternion(player_ship_mesh.quaternion);
@@ -243,7 +238,6 @@ function animate(timestamp) {
   for (i in asteroids) {
     var ast = asteroids[i];
     var others = quadtree.retrieve(ast.bounds);
-    gravitate
 
     for (j in others) {
       var other_bounds = others[j];

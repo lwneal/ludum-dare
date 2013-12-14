@@ -1,6 +1,3 @@
-var GRAVITATIONAL_CONSTANT = 0.90;
-var PLANE_ATTRACTION_COEFF = 10;
-
 function rand(min, max) {
   return min + (Math.random() * (max - min));
 };
@@ -14,14 +11,14 @@ function vecDistanceSq(a, b) {
 
 function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial());
-  this.r = rand(1, 100) * Math.random() * Math.random() * Math.random() / 2;
+  this.r = rand(50, 100) * Math.random() * Math.random() * Math.random() / 2;
   this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
   this.mesh.position.x = (Math.random() - 0.5) * 1000;
   this.mesh.position.y = (Math.random() - 0.5) * 100;
   this.mesh.position.z = (Math.random() - 0.5) * 1000;
-  this.vx = (Math.random() - 0.5) * 100;
+  this.vx = (Math.random() - 0.5) + 0.00 * this.mesh.position.z;
   this.vy = (Math.random() - 0.5) * .01;
-  this.vz = (Math.random() - 0.5) * 100;
+  this.vz = (Math.random() - 0.5) - 0.00 * this.mesh.position.x;
 
   this.rvx = (Math.random() - 0.5) * 0.1;
   this.rvy = (Math.random() - 0.5) * 0.1;
@@ -35,11 +32,13 @@ function asteroid() {
   this.planeMesh.rotateOnAxis(new THREE.Vector3(-1, 0, 0), Math.PI / 2);
   scene.add(this.planeMesh);
 
+  /*
   var boxMat = new THREE.MeshBasicMaterial({
     wireframe: true
   });
   this.boxMesh = new THREE.Mesh(new THREE.CubeGeometry(this.r*2, this.r*2, this.r*2), boxMat);
   scene.add(this.boxMesh);
+  */
 
   this.bounds = {obj: this};
   this.type = function() { return "asteroid"; };
@@ -47,7 +46,7 @@ function asteroid() {
 };
 
 function updateBounds(ast) {
-  var radiusMult = 1.0;
+  var radiusMult = 2.0;
   ast.bounds.x = ast.mesh.position.x - ast.r * radiusMult;
   ast.bounds.y = ast.mesh.position.z - ast.r * radiusMult;
   ast.bounds.width = 2 * ast.r* radiusMult;
@@ -62,9 +61,12 @@ function updateBounds(ast) {
     ast.planeMesh.material.color.setHex(0x444444);
   }
 
-  ast.boxMesh.position.set(ast.mesh.position.x, ast.mesh.position.y, ast.mesh.position.z);
+  //ast.boxMesh.position.set(ast.mesh.position.x, ast.mesh.position.y, ast.mesh.position.z);
 };
 
+var axx = new THREE.Vector3(1, 0, 0);
+var axy = new THREE.Vector3(0, 1, 0);
+var axz = new THREE.Vector3(0, 0, 1);
 function asteroidMove(ast, scale) {
   var forward = new THREE.Vector3(ast.vx, ast.vy, ast.vz);
   forward.multiplyScalar(scale);
@@ -81,20 +83,64 @@ function asteroidMove(ast, scale) {
   ast.vz *= 0.99;
 
   // Keep things close to the xz plane
-  if (ast.mesh.position.y > 0) {
-    ast.vy -= PLANE_ATTRACTION_COEFF * scale;
-  } else {
-    ast.vy += PLANE_ATTRACTION_COEFF * scale;
+  ast.vy -= 0.02 * ast.mesh.position.y;
+  if (ast.mesh.position.y > TOP/2) {
+    ast.mesh.position.y -= PLANE_ATTRACTION_COEFF * scale;
+  } else if (ast.mesh.position.y < BOTTOM/2) {
+    ast.mesh.position.y += PLANE_ATTRACTION_COEFF * scale;
+  }
+  if (ast.mesh.position.y > TOP) {
+    ast.mesh.position.y = TOP;
+    ast.vy = 0;
+  }
+  if (ast.mesh.position.y < BOTTOM) {
+    ast.mesh.position.y = BOTTOM;
+    ast.vy = 0;
   }
 
   // rotate around!
-  var axx = new THREE.Vector3(1, 0, 0);
-  var axy = new THREE.Vector3(0, 1, 0);
-  var axz = new THREE.Vector3(0, 0, 1);
   ast.mesh.rotateOnAxis(axx, ast.rvx * scale);
   ast.mesh.rotateOnAxis(axy, ast.rvy * scale);
   ast.mesh.rotateOnAxis(axz, ast.rvz * scale);
+
+  // Wrap around
+  if (ast.mesh.position.x < BOUNDS.x) {
+    ast.mesh.position.x += BOUNDS.width;
+  }
+  if (ast.mesh.position.x > BOUNDS.x + BOUNDS.width) {
+    ast.mesh.position.x -= BOUNDS.width;
+  }
+  if (ast.mesh.position.z < BOUNDS.y) {
+    ast.mesh.position.z += BOUNDS.height;
+  }
+  if (ast.mesh.position.z > BOUNDS.y + BOUNDS.height) {
+    ast.mesh.position.z -= BOUNDS.height;
+  }
+
   updateBounds(ast);
+}
+
+function asteroidCollide(ast, bst) {
+  var astmass = ast.r*ast.r;
+  var bstmass = bst.r*bst.r;
+
+  var diff = new THREE.Vector3(
+      ast.mesh.position.x - bst.mesh.position.x,
+      ast.mesh.position.y - bst.mesh.position.y,
+      ast.mesh.position.z - bst.mesh.position.z);
+  diff.normalize();
+
+  ast.vx += bstmass / astmass * diff.x / 10;
+  ast.vy += bstmass / astmass * diff.y / 10;
+  ast.vz += bstmass / astmass * diff.z / 10;
+
+  ast.rvx += Math.random() - 0.5;
+  ast.rvy += Math.random() - 0.5;
+  ast.rvz += Math.random() - 0.5;
+
+  ast.rvx *= 0.9;
+  ast.rvy *= 0.9;
+  ast.rvz *= 0.9;
 }
 
 function asteroidInteract(ast, bst, scale) {
@@ -110,14 +156,8 @@ function asteroidInteract(ast, bst, scale) {
   bst.vy -= (dy / distSq) * astMass * GRAVITATIONAL_CONSTANT * scale;
   bst.vz -= (dz / distSq) * astMass * GRAVITATIONAL_CONSTANT * scale;
 
-  if (vecDistanceSq(ast.mesh.position, bst.mesh.position) < ast.r*ast.r + bst.r*bst.r) {
-    ast.vx += ast.mesh.position.x - bst.mesh.position.x;
-    ast.vy += ast.mesh.position.y - bst.mesh.position.y;
-    ast.vz += ast.mesh.position.z - bst.mesh.position.z;
-
-    ast.rvx += Math.random() - 0.5;
-    ast.rvy += Math.random() - 0.5;
-    ast.rvz += Math.random() - 0.5;
+  if (vecDistanceSq(ast.mesh.position, bst.mesh.position) / 2 < ast.r*ast.r + bst.r*bst.r) {
+    asteroidCollide(ast, bst);
   }
 }
 
@@ -136,19 +176,19 @@ function calculateGravityCenter() {
   return gravity;
 }
 
-var gravitate = function(obj, c) {
+var gravitate = function(obj, c, scale) {
   var dx = obj.mesh.position.x - c.x;
   var dy = obj.mesh.position.y - c.y;
   var dz = obj.mesh.position.z - c.z;
 
-  obj.vx -= dx * .001;
-  obj.vy -= dy * .001;
-  obj.vz -= dz * .001;
+  obj.vx += 1 / (dx*dx);
+  obj.vy += 1 / (dy*dy);
+  obj.vz += 1 / (dz*dz);
 };
 
 var Asteroid = (function() {
   var init = function(geom_name) {
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < 1000; i++) {
       asteroids.push(new asteroid());
     }
   };
