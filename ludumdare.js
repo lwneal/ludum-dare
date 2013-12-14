@@ -3,15 +3,12 @@ if ( ! Detector.webgl ) {
   document.getElementById( 'container' ).innerHTML = "The game is running!";
 }
 
-var container, stats;
+var container, stats, keyboard;
 
 var camera, controls, scene, renderer;
 
 var mesh;
-
-var worldWidth = 128, worldDepth = 128,
-worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2,
-data = generateHeight( worldWidth, worldDepth );
+var player_ship_mesh;
 
 var clock = new THREE.Clock();
 
@@ -22,14 +19,7 @@ function init() {
 
   container = document.getElementById( 'container' );
 
-  camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
-  camera.position.y = getY( worldHalfWidth, worldHalfDepth ) * 100 + 100;
-
-  controls = new THREE.FirstPersonControls( camera );
-
-  controls.movementSpeed = 1000;
-  controls.lookSpeed = 0.125;
-  controls.lookVertical = true;
+  keyboard = new THREEx.KeyboardState();
 
   scene = new THREE.Scene();
 
@@ -152,7 +142,14 @@ function init() {
     m.scale.set(10, 10, 10);
     m.position.z = 10;
     scene.add(m);
+    player_ship_mesh = m;
+
+    camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
+    camera.position.z = 50;
+    camera.position.y = 25;
+    player_ship_mesh.add(camera);
   });
+
 
   window.addEventListener( 'resize', onWindowResize, false );
 
@@ -165,39 +162,6 @@ function onWindowResize() {
 
   renderer.setSize( window.innerWidth, window.innerHeight );
 
-  controls.handleResize();
-
-}
-
-function generateHeight( width, height ) {
-
-  var data = [], perlin = new ImprovedNoise(),
-  size = width * height, quality = 2, z = Math.random() * 100;
-
-  for ( var j = 0; j < 4; j ++ ) {
-
-    if ( j == 0 ) for ( var i = 0; i < size; i ++ ) data[ i ] = 0;
-
-    for ( var i = 0; i < size; i ++ ) {
-
-      var x = i % width, y = ( i / width ) | 0;
-      data[ i ] += perlin.noise( x / quality, y / quality, z ) * quality;
-
-
-    }
-
-    quality *= 4
-
-  }
-
-  return data;
-
-}
-
-function getY( x, z ) {
-
-  return ( data[ x + z * worldWidth ] * 0.2 ) | 0;
-
 }
 
 //
@@ -206,6 +170,10 @@ function animate() {
 
   requestAnimationFrame( animate );
 
+  if (keyboard.pressed('S')) {
+    player_ship_mesh.position.z += 5;
+  }
+
   render();
   stats.update();
 
@@ -213,7 +181,6 @@ function animate() {
 
 function render() {
 
-  controls.update( clock.getDelta() );
   renderer.render( scene, camera );
 
 }
