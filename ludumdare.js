@@ -146,17 +146,18 @@ function init() {
     };
 
     var makeAsteroid = function(geometry) {
-      var m = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
-      m.scale.set(100, 100, 100);
-      m.position.x = (Math.random() - 0.5) * 10000;
-      m.position.y = (Math.random() - 0.5) * 10000;
-      m.position.z = (Math.random() - 0.5) * 10000;
-      scene.add(m);
-      asteroids.push(m);
+      var a = {};
+      a.mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
+      a.mesh.scale.set(100, 100, 100);
+      a.mesh.position.x = (Math.random() - 0.5) * 10000;
+      a.mesh.position.y = (Math.random() - 0.5) * 10000;
+      a.mesh.position.z = (Math.random() - 0.5) * 10000;
+      scene.add(a.mesh);
+      asteroids.push(a);
     };
 
     // Load some sample meshes
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < 10; i++) {
       makeAsteroid(Assets.get("ast1"));
     }
 
@@ -190,10 +191,11 @@ function onWindowResize() {
 // RENDER LOOP
 
 function moveAsteroids(scale) {
-  for (a in asteroids) {
-    a.x += a.vx * scale;
-    a.y += a.vy * scale;
-    a.z += a.vz * scale;
+  for (i in asteroids) {
+    var a = asteroids[i];
+    var forward = new THREE.Vector3(0, 0, -1);
+    forward.multiplyScalar(scale * 3000.0);
+    a.mesh.position.add(forward);
   }
 };
 
