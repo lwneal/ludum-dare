@@ -9,10 +9,6 @@ var camera, controls, scene, renderer;
 
 var mesh;
 
-var worldWidth = 128, worldDepth = 128,
-worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2,
-data = generateHeight( worldWidth, worldDepth );
-
 var clock = new THREE.Clock();
 
 init();
@@ -23,7 +19,7 @@ function init() {
   container = document.getElementById( 'container' );
 
   camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
-  camera.position.y = getY( worldHalfWidth, worldHalfDepth ) * 100 + 100;
+  camera.position.x = -500;
 
   controls = new THREE.FirstPersonControls( camera );
 
@@ -169,38 +165,7 @@ function onWindowResize() {
 
 }
 
-function generateHeight( width, height ) {
-
-  var data = [], perlin = new ImprovedNoise(),
-  size = width * height, quality = 2, z = Math.random() * 100;
-
-  for ( var j = 0; j < 4; j ++ ) {
-
-    if ( j == 0 ) for ( var i = 0; i < size; i ++ ) data[ i ] = 0;
-
-    for ( var i = 0; i < size; i ++ ) {
-
-      var x = i % width, y = ( i / width ) | 0;
-      data[ i ] += perlin.noise( x / quality, y / quality, z ) * quality;
-
-
-    }
-
-    quality *= 4
-
-  }
-
-  return data;
-
-}
-
-function getY( x, z ) {
-
-  return ( data[ x + z * worldWidth ] * 0.2 ) | 0;
-
-}
-
-//
+// RENDER LOOP
 
 function animate() {
 
