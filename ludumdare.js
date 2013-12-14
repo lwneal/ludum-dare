@@ -52,105 +52,9 @@ function init() {
   var materialNormalMap = new THREE.ShaderMaterial( parameters );
   
 
-  // sides
-
-  var matrix = new THREE.Matrix4();
-
-  var pxGeometry = new THREE.PlaneGeometry( 100, 100 );
-  pxGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.0;
-  pxGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
-  pxGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
-  pxGeometry.applyMatrix( matrix.makeRotationY( Math.PI / 2 ) );
-  pxGeometry.applyMatrix( matrix.makeTranslation( 50, 0, 0 ) );
-
-  var nxGeometry = new THREE.PlaneGeometry( 100, 100 );
-  nxGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
-  nxGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
-  nxGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
-  nxGeometry.applyMatrix( matrix.makeRotationY( - Math.PI / 2 ) );
-  nxGeometry.applyMatrix( matrix.makeTranslation( - 50, 0, 0 ) );
-
-  var pyGeometry = new THREE.PlaneGeometry( 100, 100 );
-  pyGeometry.faceVertexUvs[ 0 ][ 0 ][ 1 ].y = 0.5;
-  pyGeometry.faceVertexUvs[ 0 ][ 1 ][ 0 ].y = 0.5;
-  pyGeometry.faceVertexUvs[ 0 ][ 1 ][ 1 ].y = 0.5;
-  pyGeometry.applyMatrix( matrix.makeRotationX( - Math.PI / 2 ) );
-  pyGeometry.applyMatrix( matrix.makeTranslation( 0, 50, 0 ) );
-
-  var pzGeometry = new THREE.PlaneGeometry( 100, 100 );
-  pzGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
-  pzGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
-  pzGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
-  pzGeometry.applyMatrix( matrix.makeTranslation( 0, 0, 50 ) );
-
-  var nzGeometry = new THREE.PlaneGeometry( 100, 100 );
-  nzGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
-  nzGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
-  nzGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
-  nzGeometry.applyMatrix( matrix.makeRotationY( Math.PI ) );
-  nzGeometry.applyMatrix( matrix.makeTranslation( 0, 0, -50 ) );
-
-  //
-
-  var geometry = new THREE.Geometry();
-  var dummy = new THREE.Mesh();
-
-  for ( var z = 0; z < worldDepth; z ++ ) {
-
-    for ( var x = 0; x < worldWidth; x ++ ) {
-
-      var h = getY( x, z );
-
-      dummy.position.x = x * 100 - worldHalfWidth * 100;
-      dummy.position.y = h * 100;
-      dummy.position.z = z * 100 - worldHalfDepth * 100;
-
-      var px = getY( x + 1, z );
-      var nx = getY( x - 1, z );
-      var pz = getY( x, z + 1 );
-      var nz = getY( x, z - 1 );
-
-      dummy.geometry = pyGeometry;
-      THREE.GeometryUtils.merge( geometry, dummy );
-
-      if ( ( px != h && px != h + 1 ) || x == 0 ) {
-
-        dummy.geometry = pxGeometry;
-        THREE.GeometryUtils.merge( geometry, dummy );
-
-      }
-
-      if ( ( nx != h && nx != h + 1 ) || x == worldWidth - 1 ) {
-
-        dummy.geometry = nxGeometry;
-        THREE.GeometryUtils.merge( geometry, dummy );
-
-      }
-
-      if ( ( pz != h && pz != h + 1 ) || z == worldDepth - 1 ) {
-
-        dummy.geometry = pzGeometry;
-        THREE.GeometryUtils.merge( geometry, dummy );
-
-      }
-
-      if ( ( nz != h && nz != h + 1 ) || z == 0 ) {
-
-        dummy.geometry = nzGeometry;
-        THREE.GeometryUtils.merge( geometry, dummy );
-
-      }
-
-    }
-
-  }
-
   var texture = THREE.ImageUtils.loadTexture('asteroid.jpg');
   texture.magFilter = THREE.NearestFilter;
   texture.minFilter = THREE.LinearMipMapLinearFilter;
-
-  var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, ambient: 0xbbbbbb } ) );
-  scene.add( mesh );
 
   /// STARS
   // stars
@@ -234,7 +138,21 @@ function init() {
   stats.domElement.style.top = '0px';
   container.appendChild( stats.domElement );
 
-  //
+  // Load some sample meshes
+  var loader = new THREE.JSONLoader();
+  loader.load("assets/ast1.js", function(geometry) {
+    var m = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
+    m.scale.set(10, 10, 10);
+    m.position.y = 10;
+    scene.add(m);
+  });
+
+  loader.load("assets/player_ship.js", function(geom) {
+    var m = new THREE.Mesh(geom, new THREE.MeshBasicMaterial());
+    m.scale.set(10, 10, 10);
+    m.position.z = 10;
+    scene.add(m);
+  });
 
   window.addEventListener( 'resize', onWindowResize, false );
 
