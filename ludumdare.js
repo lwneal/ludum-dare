@@ -15,6 +15,8 @@ var player_ship_mesh;
 var clock = new THREE.Clock();
 
 var asteroids = [];
+var bounds = {x: -10000, y: -10000, width: 10000, height: 10000};
+var quadtree = new QuadTree(bounds);
 
 init();
 
@@ -42,8 +44,6 @@ function init() {
     fog: true
   };
 
-  var materialNormalMap = new THREE.ShaderMaterial( parameters );
-  
 
   var texture = THREE.ImageUtils.loadTexture('asteroid.jpg');
   texture.magFilter = THREE.NearestFilter;
@@ -111,10 +111,10 @@ function init() {
   var BLACK = 0x000000;
   var RED = 0xFF0000;
   var BLUE = 0x0000FF;
-  var ambientLight = new THREE.AmbientLight( RED );
+  var ambientLight = new THREE.AmbientLight( 0x202020 );
   scene.add( ambientLight );
 
-  var directionalLight = new THREE.DirectionalLight( BLUE, 2 );
+  var directionalLight = new THREE.DirectionalLight( 0xFFFFFF, 2 );
   directionalLight.position.set( 1, 1, 0.5 ).normalize();
   scene.add( directionalLight );
 
@@ -147,7 +147,7 @@ function init() {
     };
 
     var makeAsteroid = function(geometry) {
-      var m = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
+      var m = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xFFFFFF}));
       m.scale.set(100, 100, 100);
       m.position.x = (Math.random() - 0.5) * 10000;
       m.position.y = (Math.random() - 0.5) * 10000;
@@ -161,7 +161,7 @@ function init() {
       makeAsteroid(Assets.get("ast1"));
     }
 
-    var m = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshBasicMaterial());
+    var m = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshLambertMaterial({color: 0xFF0000}));
     m.scale.set(10, 10, 10);
     m.position.z = 10;
     scene.add(m);
