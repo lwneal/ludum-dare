@@ -140,11 +140,7 @@ function init() {
   loader.load("assets/target_ship.js", Assets.asset("target_ship"));
 
   Assets.callback = function() {
-    console.log("All assets loaded");
-    // Load some sample meshes
-    for (var i = 0; i < 10; i++) {
-      Asteroid.init("ast1");
-    }
+    Asteroid.init();
 
     var m = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshBasicMaterial());
     m.scale.set(10, 10, 10);
@@ -204,9 +200,7 @@ function animate(timestamp) {
     player_ship_mesh.position.add(ship_forward.negate());
   }
 
-  for (i in asteroids) {
-    asteroids[i].update(scale);
-  }
+  Asteroid.update(scale);
   TargetEnemy.update(scale);
 
   render();
