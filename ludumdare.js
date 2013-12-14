@@ -170,6 +170,16 @@ function animate() {
 
   requestAnimationFrame( animate );
 
+  if (keyboard.pressed('A')) {
+    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), 0.01);
+  }
+  if (keyboard.pressed('D')) {
+    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), -0.01);
+  }
+
+  if (keyboard.pressed('W')) {
+    player_ship_mesh.position.z -= 5;
+  }
   if (keyboard.pressed('S')) {
     player_ship_mesh.position.z += 5;
   }
