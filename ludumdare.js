@@ -11,6 +11,8 @@ var mesh;
 
 var clock = new THREE.Clock();
 
+var asteroids = [];
+
 init();
 animate();
 
@@ -138,8 +140,8 @@ function init() {
   var loader = new THREE.JSONLoader();
   loader.load("assets/ast1.js", function(geometry) {
     var m = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
-    m.scale.set(10, 10, 10);
-    m.position.y = 10;
+    m.scale.set(100, 100, 100);
+    m.position.x = 1000;
     scene.add(m);
   });
 
