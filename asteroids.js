@@ -11,14 +11,18 @@ function vecDistanceSq(a, b) {
 
 function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial());
-  this.r = rand(50, 100) * Math.random() * Math.random();
+  this.r = rand(5, 10);
   this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
-  this.mesh.position.x = rand(BOUNDS.x, BOUNDS.x + BOUNDS.width);
+  this.mesh.position.x = rand(BOUNDS.x/2, (BOUNDS.x + BOUNDS.width)/2);
   this.mesh.position.y = rand(BOTTOM, TOP);
-  this.mesh.position.z = rand(BOUNDS.y, BOUNDS.y + BOUNDS.height);
-  this.vx = (Math.random() - 0.5) + 0.20 * this.mesh.position.z;
-  this.vy = (Math.random() - 0.5) * .1;
-  this.vz = (Math.random() - 0.5) - 0.20 * this.mesh.position.x;
+  this.mesh.position.z = rand(BOUNDS.y/2, (BOUNDS.y + BOUNDS.height)/2);
+
+  var pos = new THREE.Vector3(this.mesh.position);
+  pos.normalize();
+
+  this.vx = (Math.random() - 0.5) + 20 * pos.x;
+  this.vy = (Math.random() - 0.5) * 10;
+  this.vz = (Math.random() - 0.5) - 20 * pos.z;
 
   this.rvx = (Math.random() - 0.5) * 0.1;
   this.rvy = (Math.random() - 0.5) * 0.1;
@@ -78,9 +82,9 @@ function asteroidMove(ast, scale) {
   ast.vz += rand(-1,1) * scale;
 
   // dampen
-  ast.vx *= 0.99;
-  ast.vy *= 0.99;
-  ast.vz *= 0.99;
+  ast.vx *= 0.999;
+  ast.vy *= 0.999;
+  ast.vz *= 0.999;
 
   // Keep things close to the xz plane
   ast.vy -= 0.02 * ast.mesh.position.y;
@@ -88,14 +92,6 @@ function asteroidMove(ast, scale) {
     ast.mesh.position.y -= PLANE_ATTRACTION_COEFF * scale;
   } else if (ast.mesh.position.y < BOTTOM/2) {
     ast.mesh.position.y += PLANE_ATTRACTION_COEFF * scale;
-  }
-  if (ast.mesh.position.y > TOP) {
-    ast.mesh.position.y = TOP;
-    ast.vy = 0;
-  }
-  if (ast.mesh.position.y < BOTTOM) {
-    ast.mesh.position.y = BOTTOM;
-    ast.vy = 0;
   }
 
   // rotate around!

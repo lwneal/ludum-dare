@@ -16,7 +16,7 @@ var clock = new THREE.Clock();
 
 var asteroids = [];
 var missiles = [];
-var GRAVITATIONAL_CONSTANT = 0.10;
+var GRAVITATIONAL_CONSTANT = -0.02;
 var PLANE_ATTRACTION_COEFF = 40;
 var TOP = 100;
 var BOTTOM = -100;
