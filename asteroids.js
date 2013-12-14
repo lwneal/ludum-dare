@@ -19,9 +19,9 @@ function asteroid() {
   this.mesh.position.x = (Math.random() - 0.5) * 1000;
   this.mesh.position.y = (Math.random() - 0.5) * 100;
   this.mesh.position.z = (Math.random() - 0.5) * 1000;
-  this.vx = (Math.random() - 0.5) * 100;
+  this.vx = (Math.random() - 0.5) + 0.00 * this.mesh.position.z;
   this.vy = (Math.random() - 0.5) * .01;
-  this.vz = (Math.random() - 0.5) * 100;
+  this.vz = (Math.random() - 0.5) - 0.00 * this.mesh.position.x;
 
   this.rvx = (Math.random() - 0.5) * 0.1;
   this.rvy = (Math.random() - 0.5) * 0.1;
@@ -81,11 +81,12 @@ function asteroidMove(ast, scale) {
   ast.vz += rand(-1,1) * scale;
 
   // dampen
-  ast.vx *= 0.99;
-  ast.vy *= 0.99;
-  ast.vz *= 0.99;
+  ast.vx *= 0.999;
+  ast.vy *= 0.999;
+  ast.vz *= 0.999;
 
   // Keep things close to the xz plane
+  ast.vy -= 0.02 * ast.mesh.position.y;
   if (ast.mesh.position.y > 100) {
     ast.mesh.position.y -= PLANE_ATTRACTION_COEFF * scale;
   } else if (ast.mesh.position.y < -100) {
@@ -97,6 +98,23 @@ function asteroidMove(ast, scale) {
   ast.mesh.rotateOnAxis(axy, ast.rvy * scale);
   ast.mesh.rotateOnAxis(axz, ast.rvz * scale);
   updateBounds(ast);
+}
+
+function asteroidCollide(ast, bst) {
+  var astmass = ast.r*ast.r;
+  var bstmass = bst.r*bst.r;
+
+  ast.vx += 0.001 * (ast.mesh.position.x - bst.mesh.position.x) * astmass / bstmass;
+  ast.vy += 0.001 * (ast.mesh.position.y - bst.mesh.position.y) * astmass / bstmass;
+  ast.vz += 0.001 * (ast.mesh.position.z - bst.mesh.position.z) * astmass / bstmass;
+
+  ast.rvx += Math.random() - 0.5;
+  ast.rvy += Math.random() - 0.5;
+  ast.rvz += Math.random() - 0.5;
+
+  ast.rvx *= 0.9;
+  ast.rvy *= 0.9;
+  ast.rvz *= 0.9;
 }
 
 function asteroidInteract(ast, bst, scale) {
@@ -113,13 +131,7 @@ function asteroidInteract(ast, bst, scale) {
   bst.vz -= (dz / distSq) * astMass * GRAVITATIONAL_CONSTANT * scale;
 
   if (vecDistanceSq(ast.mesh.position, bst.mesh.position) < ast.r*ast.r + bst.r*bst.r) {
-    ast.vx += ast.mesh.position.x - bst.mesh.position.x;
-    ast.vy += ast.mesh.position.y - bst.mesh.position.y;
-    ast.vz += ast.mesh.position.z - bst.mesh.position.z;
-
-    ast.rvx += Math.random() - 0.5;
-    ast.rvy += Math.random() - 0.5;
-    ast.rvz += Math.random() - 0.5;
+    asteroidCollide(ast, bst);
   }
 }
 
@@ -143,9 +155,9 @@ var gravitate = function(obj, c) {
   var dy = obj.mesh.position.y - c.y;
   var dz = obj.mesh.position.z - c.z;
 
-  obj.vx -= .1 / (dx*dx);
-  obj.vy -= .1 / (dy*dy);
-  obj.vz -= .1 / (dz*dz);
+  obj.vx += 1 / (dx*dx);
+  obj.vy += 1 / (dy*dy);
+  obj.vz += 1 / (dz*dz);
 };
 
 var Asteroid = (function() {

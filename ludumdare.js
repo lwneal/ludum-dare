@@ -184,8 +184,6 @@ function animate(timestamp) {
 
   requestAnimationFrame( animate );
 
-  console.log('how many asteroids? ' + asteroids.length);
-
   if (last_time === null) last_time = timestamp;
   var scale = (timestamp - last_time) / 1000.0;
   last_time = timestamp;
@@ -217,7 +215,6 @@ function animate(timestamp) {
   for (i in asteroids) {
     var ast = asteroids[i];
     var others = quadtree.retrieve(ast.bounds);
-    gravitate
 
     for (j in others) {
       var other_bounds = others[j];
