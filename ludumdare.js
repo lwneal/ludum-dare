@@ -3,6 +3,8 @@ if ( ! Detector.webgl ) {
   document.getElementById( 'container' ).innerHTML = "The game is running!";
 }
 
+var loader = new THREE.JSONLoader();
+
 var container, stats, keyboard;
 
 var camera, controls, scene, renderer;
@@ -134,26 +136,20 @@ function init() {
     return min + (Math.random() * (max - min));
   };
 
-  var makeAsteroid = function(x,y,z) {
-    var asteroid = {};
-    asteroid.x = rand(-50 * 1000, 50 * 1000);
-    asteroid.y = rand(-50 * 1000, 50 * 1000);
-    asteroid.z = rand(-50 * 1000, 50 * 1000);
-    asteroid.vx = rand(-50 * 10, 50 * 10);
-    asteroid.vy = rand(-50 * 10, 50 * 10);
-    asteroid.vz = rand(-50 * 10, 50 * 10);
-    asteroids.push(asteroid);
+  var makeAsteroid = function(geometry) {
+    var m = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
+    m.scale.set(100, 100, 100);
+    m.position.x = (Math.random() - 0.5) * 10000;
+    m.position.y = (Math.random() - 0.5) * 10000;
+    m.position.z = (Math.random() - 0.5) * 10000;
+    scene.add(m);
+    asteroids.push(m);
   };
 
   // Load some sample meshes
   loader.load("assets/ast1.js", function(geometry) {
     for (var i = 0; i < 1000; i++) {
-      var m = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
-      m.scale.set(100, 100, 100);
-      m.position.x = (Math.random() - 0.5) * 10000;
-      m.position.y = (Math.random() - 0.5) * 10000;
-      m.position.z = (Math.random() - 0.5) * 10000;
-      scene.add(m);
+      makeAsteroid(geometry);
     }
   });
 
@@ -187,7 +183,9 @@ function onWindowResize() {
 
 function moveAsteroids(scale) {
   for (a in asteroids) {
-
+    a.x += a.vx * scale;
+    a.y += a.vy * scale;
+    a.z += a.vz * scale;
   }
 };
 
