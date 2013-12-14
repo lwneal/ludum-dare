@@ -47,9 +47,8 @@ function init() {
   texture.minFilter = THREE.LinearMipMapLinearFilter;
 
   /// STARS
-  // stars
 
-  var radius = 500;
+  var radius = 100;
   var i, r = radius, starsGeometry = [ new THREE.Geometry(), new THREE.Geometry() ];
 
   for ( i = 0; i < 250; i ++ ) {
@@ -86,7 +85,7 @@ function init() {
     new THREE.ParticleSystemMaterial( { color: 0x1a1a1a, size: 1, sizeAttenuation: false } )
   ];
 
-  for ( i = 10; i < 30; i ++ ) {
+  for ( i = 10; i < 300; i ++ ) {
 
     stars = new THREE.ParticleSystem( starsGeometry[ i % 2 ], starsMaterials[ i % 6 ] );
 
@@ -103,7 +102,8 @@ function init() {
     scene.add( stars );
 
   }
-  //
+
+  // LIGHTING
 
   var BLACK = 0x000000;
   var RED = 0xFF0000;
@@ -164,7 +164,7 @@ function onWindowResize() {
 
 }
 
-//
+// RENDER LOOP
 
 function animate() {
 
