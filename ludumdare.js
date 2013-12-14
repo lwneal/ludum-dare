@@ -131,12 +131,15 @@ function init() {
   container.appendChild( stats.domElement );
 
   // Load some sample meshes
-  var loader = new THREE.JSONLoader();
   loader.load("assets/ast1.js", function(geometry) {
-    var m = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
-    m.scale.set(100, 100, 100);
-    m.position.x = 1000;
-    scene.add(m);
+    for (var i = 0; i < 1000; i++) {
+      var m = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
+      m.scale.set(100, 100, 100);
+      m.position.x = (Math.random() - 0.5) * 10000;
+      m.position.y = (Math.random() - 0.5) * 10000;
+      m.position.z = (Math.random() - 0.5) * 10000;
+      scene.add(m);
+    }
   });
 
   loader.load("assets/player_ship.js", function(geom) {
@@ -151,7 +154,6 @@ function init() {
     camera.position.y = 25;
     player_ship_mesh.add(camera);
   });
-
 
   window.addEventListener( 'resize', onWindowResize, false );
 
