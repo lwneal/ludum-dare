@@ -13,7 +13,7 @@ var player_ship_mesh;
 var clock = new THREE.Clock();
 
 init();
-animate();
+requestAnimationFrame(animate);
 
 function init() {
 
@@ -166,19 +166,25 @@ function onWindowResize() {
 
 // RENDER LOOP
 
-function animate() {
+var last = null;
+function animate(timestamp) {
+
+  if (last === null) last = timestamp;
+  var scale = (timestamp - last) / 1000.0;
 
   requestAnimationFrame( animate );
 
   if (keyboard.pressed('A')) {
-    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), 0.01);
+    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), 0.01 * scale);
   }
   if (keyboard.pressed('D')) {
-    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), -0.01);
+    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), -0.01 * scale);
   }
 
   var ship_forward = new THREE.Vector3(0, 0, -1);
   ship_forward.applyQuaternion(player_ship_mesh.quaternion);
+  ship_forward.multiplyScalar(scale * 10.0);
+
   if (keyboard.pressed('W')) {
     player_ship_mesh.position.add(ship_forward);
   }
