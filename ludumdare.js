@@ -95,10 +95,10 @@ function init() {
   var BLACK = 0x000000;
   var RED = 0xFF0000;
   var BLUE = 0x0000FF;
-  var ambientLight = new THREE.AmbientLight( 0x666666 );
+  var ambientLight = new THREE.AmbientLight( 0xAAAAAA );
   scene.add( ambientLight );
 
-  var directionalLight = new THREE.DirectionalLight( 0x222222, 2 );
+  var directionalLight = new THREE.DirectionalLight( 0x555555, 2 );
   directionalLight.position.set( 1, 1, 0.5 ).normalize();
   scene.add( directionalLight );
 
