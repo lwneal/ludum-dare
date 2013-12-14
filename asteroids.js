@@ -1,4 +1,5 @@
-var ASTEROID_RADIUS = 100*100*2;
+var GRAVITATIONAL_CONSTANT = 0.01;
+var PLANE_ATTRACTION_COEFF = 10;
 
 function rand(min, max) {
   return min + (Math.random() * (max - min));
@@ -21,6 +22,10 @@ function asteroid() {
   this.vx = (Math.random() - 0.5) * 1000;
   this.vy = (Math.random() - 0.5) * 100;
   this.vz = (Math.random() - 0.5) * 1000;
+
+  this.rvx = (Math.random() - 0.5) * 0.1;
+  this.rvy = (Math.random() - 0.5) * 0.1;
+  this.rvz = (Math.random() - 0.5) * 0.1;
   scene.add(this.mesh);
 };
 
@@ -49,31 +54,33 @@ var Asteroid = (function() {
       ast.vz *= 0.999;
 
       // Keep things close to the xz plane
-      ast.vy -= 0.001 * ast.mesh.position.y;
+      if (ast.mesh.position.y > 0) {
+        ast.vy -= PLANE_ATTRACTION_COEFF;
+      } else {
+        ast.vy += PLANE_ATTRACTION_COEFF;
+      }
+
+      var astMass = ast.r * ast.r;
 
       // lol collision detection
-      for (var j = i + 1; j < asteroids.length; j++) {
+      for (var j = 0; j < asteroids.length; j++) {
+        if (i == j) continue;
         var bst = asteroids[j];
 
-        // gravitation
-
+        // gravitation ?!
         var dx = (bst.mesh.position.x - ast.mesh.position.x);
         var dy = (bst.mesh.position.y - ast.mesh.position.y);
         var dz = (bst.mesh.position.z - ast.mesh.position.z);
 
         var distSq = dx*dx + dy*dy + dz*dz;
-        bst.vx -= (dx / distSq) * 100;
-        bst.vy -= (dy / distSq) * 100;
-        bst.vz -= (dz / distSq) * 100;
+        bst.vx -= (dx / distSq) * astMass * GRAVITATIONAL_CONSTANT
+        bst.vy -= (dy / distSq) * astMass * GRAVITATIONAL_CONSTANT;
+        bst.vz -= (dz / distSq) * astMass * GRAVITATIONAL_CONSTANT;
 
         if (vecDistanceSq(ast.mesh.position, bst.mesh.position) < ast.r*ast.r + bst.r*bst.r) {
           ast.vx += ast.mesh.position.x - bst.mesh.position.x;
           ast.vy += ast.mesh.position.y - bst.mesh.position.y;
           ast.vz += ast.mesh.position.z - bst.mesh.position.z;
-
-          bst.vx -= ast.mesh.position.x - bst.mesh.position.x;
-          bst.vy -= ast.mesh.position.y - bst.mesh.position.y;
-          bst.vz -= ast.mesh.position.z - bst.mesh.position.z;
         }
       }
 
