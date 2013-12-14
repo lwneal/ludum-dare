@@ -56,6 +56,25 @@
 
         scene = new THREE.Scene();
 
+        // uniforms
+
+				var shader = THREE.ShaderLib[ "normalmap" ];
+				var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+				uniforms[ "uDiffuseColor" ].value.setHex( 0xffffff );
+				uniforms[ "uSpecularColor" ].value.setHex( 0x333333 );
+				uniforms[ "uAmbientColor" ].value.setHex( 0x000000 );
+
+				var parameters = {
+					fragmentShader: shader.fragmentShader,
+					vertexShader: shader.vertexShader,
+					uniforms: uniforms,
+					lights: true,
+					fog: true
+				};
+
+				var materialNormalMap = new THREE.ShaderMaterial( parameters );
+        
+
         // sides
 
         var matrix = new THREE.Matrix4();
@@ -156,15 +175,18 @@
         var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, ambient: 0xbbbbbb } ) );
         scene.add( mesh );
 
-        var ambientLight = new THREE.AmbientLight( 0xcccccc );
+        var BLACK = 0x000000;
+        var RED = 0xFF0000;
+        var BLUE = 0x0000FF;
+        var ambientLight = new THREE.AmbientLight( RED );
         scene.add( ambientLight );
 
-        var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
+        var directionalLight = new THREE.DirectionalLight( BLUE, 2 );
         directionalLight.position.set( 1, 1, 0.5 ).normalize();
         scene.add( directionalLight );
 
         renderer = new THREE.WebGLRenderer( { alpha: false } );
-        renderer.setClearColor( 0xbfd1e5, 1 );
+        renderer.setClearColor( BLACK, 1 );
         renderer.setSize( window.innerWidth, window.innerHeight );
 
         container.innerHTML = "";
