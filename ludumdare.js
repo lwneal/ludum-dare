@@ -137,6 +137,7 @@ function init() {
   var loader = new THREE.JSONLoader();
   loader.load("assets/ast1.js", Assets.asset("ast1"));
   loader.load("assets/player_ship.js", Assets.asset("player_ship"));
+  loader.load("assets/target_ship.js", Assets.asset("target_ship"));
 
   Assets.callback = function() {
     console.log("All assets loaded");
@@ -171,6 +172,8 @@ function init() {
     camera.position.y = 5;
     camera.lookAt(new THREE.Vector3(0, 0, -5));
     player_ship_mesh.add(camera);
+
+    TargetEnemy.init("target_ship");
 
     window.addEventListener( 'resize', onWindowResize, false );
 
@@ -226,6 +229,7 @@ function animate(timestamp) {
   }
 
   moveAsteroids(scale);
+  TargetEnemy.update(scale);
 
   render();
   stats.update();
