@@ -14,8 +14,8 @@ function vecDistanceSq(a, b) {
 
 function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial());
-  this.r = rand(1, 1000) * Math.random() * Math.random() * Math.random() * 10;
-  this.mesh.scale.set(1 * this.r / 10, 1 *this.r / 10, 1 * this.r / 10);
+  this.r = rand(1, 1000) * Math.random() * Math.random() * Math.random() / 2;
+  this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
   this.mesh.position.x = (Math.random() - 0.5) * 10000;
   this.mesh.position.y = (Math.random() - 0.5) * 1000;
   this.mesh.position.z = (Math.random() - 0.5) * 10000;
@@ -32,7 +32,7 @@ function asteroid() {
     color: 0x444444,
     wireframe: true
   });
-  this.planeMesh = new THREE.Mesh(new THREE.CircleGeometry(this.r / 10, 30), mat);
+  this.planeMesh = new THREE.Mesh(new THREE.CircleGeometry(this.r, 15), mat);
   this.planeMesh.rotateOnAxis(new THREE.Vector3(-1, 0, 0), Math.PI / 2);
   scene.add(this.planeMesh);
 
