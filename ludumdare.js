@@ -13,7 +13,6 @@ var player_ship_mesh;
 var clock = new THREE.Clock();
 
 init();
-requestAnimationFrame(animate);
 
 function init() {
 
@@ -129,16 +128,21 @@ function init() {
   container.appendChild( stats.domElement );
 
   // Load some sample meshes
+  Assets.init();
+
   var loader = new THREE.JSONLoader();
-  loader.load("assets/ast1.js", function(geometry) {
-    var m = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
+  loader.load("assets/ast1.js", Assets.asset("ast1"));
+  loader.load("assets/player_ship.js", Assets.asset("player_ship"));
+
+  Assets.callback = function() {
+    console.log("All assets loaded");
+
+    var m = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshBasicMaterial());
     m.scale.set(10, 10, 10);
     m.position.y = 10;
     scene.add(m);
-  });
 
-  loader.load("assets/player_ship.js", function(geom) {
-    var m = new THREE.Mesh(geom, new THREE.MeshBasicMaterial());
+    var m = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshBasicMaterial());
     m.scale.set(10, 10, 10);
     m.position.z = 10;
     scene.add(m);
@@ -148,10 +152,11 @@ function init() {
     camera.position.z = 50;
     camera.position.y = 25;
     player_ship_mesh.add(camera);
-  });
 
+    window.addEventListener( 'resize', onWindowResize, false );
 
-  window.addEventListener( 'resize', onWindowResize, false );
+    requestAnimationFrame(animate);
+  };
 
 }
 
@@ -166,11 +171,11 @@ function onWindowResize() {
 
 // RENDER LOOP
 
-var last = null;
+var last_time = null;
 function animate(timestamp) {
 
-  if (last === null) last = timestamp;
-  var scale = (timestamp - last) / 1000.0;
+  if (last_time === null) last_time = timestamp;
+  var scale = (timestamp - last_time) / 1000.0;
 
   requestAnimationFrame( animate );
 
