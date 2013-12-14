@@ -127,20 +127,24 @@ function init() {
   Assets.callback = function() {
     Asteroid.init();
 
-    var m = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshLambertMaterial({color: 0x0080FF, ambient: 0x004080}));
-    m.scale.set(5, 5, 5);
-    scene.add(m);
-    player_ship_mesh = m;
+    PlayerShip.init();
 
     camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 2000000 );
     camera.position.z = 10;
     camera.position.y = 10;
     camera.lookAt(new THREE.Vector3(0, 0, -5));
-    player_ship_mesh.add(camera);
+    PlayerShip.mesh.add(camera);
 
     TargetEnemy.init("target_ship");
 
     missiles.push(new Missile(true));
+    var em = new Missile(false);
+    em.mesh.position.x -= 50;
+    missiles.push(em);
+
+    em = new Missile(false);
+    em.mesh.position.x += 50;
+    missiles.push(em);
 
     window.addEventListener( 'resize', onWindowResize, false );
 
@@ -196,36 +200,8 @@ function animate(timestamp) {
   var scale = (timestamp - last_time) / 1000.0;
   last_time = timestamp;
 
-  if (keyboard.pressed('A')) {
-    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), 1.0 * scale);
-  }
-  if (keyboard.pressed('D')) {
-    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), -1.0 * scale);
-  }
-  if (keyboard.pressed('Q')) {
-    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), 1.0 * scale);
-  }
-  if (keyboard.pressed('E')) {
-    player_ship_mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), -1.0 * scale);
-  }
-  if (keyboard.pressed('R')) {
-    player_ship_mesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), 1.0 * scale);
-  }
-  if (keyboard.pressed('F')) {
-    player_ship_mesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), -1.0 * scale);
-  }
 
-  var ship_forward = new THREE.Vector3(0, 0, -1);
-  ship_forward.applyQuaternion(player_ship_mesh.quaternion);
-  ship_forward.multiplyScalar(scale * 500.0);
-
-  if (keyboard.pressed('W')) {
-    player_ship_mesh.position.add(ship_forward);
-  }
-  if (keyboard.pressed('S')) {
-    player_ship_mesh.position.add(ship_forward.negate());
-  }
-
+  PlayerShip.update(scale);
   Asteroid.update(scale);
   TargetEnemy.update(scale);
   _.each(missiles, function(m) {
