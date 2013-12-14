@@ -15,8 +15,8 @@ var player_ship_mesh;
 var clock = new THREE.Clock();
 
 var asteroids = [];
-var bounds = {x: -1000000, y: -1000000, width: 1000000, height: 1000000};
-var quadtree = new QuadTree(bounds);
+var bounds = {x: -10000, y: -10000, width: 20000, height: 20000};
+var quadtree = new Quadtree(bounds);
 
 init();
 
@@ -184,6 +184,8 @@ var last_time = null;
 function animate(timestamp) {
 
   requestAnimationFrame( animate );
+
+  console.log('how many asteroids? ' + asteroids.length);
 
   if (last_time === null) last_time = timestamp;
   var scale = (timestamp - last_time) / 1000.0;
