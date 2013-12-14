@@ -3,6 +3,8 @@ if ( ! Detector.webgl ) {
   document.getElementById( 'container' ).innerHTML = "The game is running!";
 }
 
+var loader = new THREE.JSONLoader();
+
 var container, stats, keyboard;
 
 var camera, controls, scene, renderer;
@@ -11,6 +13,8 @@ var mesh;
 var player_ship_mesh;
 
 var clock = new THREE.Clock();
+
+var asteroids = [];
 
 init();
 
@@ -137,10 +141,24 @@ function init() {
   Assets.callback = function() {
     console.log("All assets loaded");
 
-    var m = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshBasicMaterial());
-    m.scale.set(10, 10, 10);
-    m.position.y = 10;
-    scene.add(m);
+    var rand = function(min, max) {
+      return min + (Math.random() * (max - min));
+    };
+
+    var makeAsteroid = function(geometry) {
+      var m = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
+      m.scale.set(100, 100, 100);
+      m.position.x = (Math.random() - 0.5) * 10000;
+      m.position.y = (Math.random() - 0.5) * 10000;
+      m.position.z = (Math.random() - 0.5) * 10000;
+      scene.add(m);
+      asteroids.push(m);
+    };
+
+    // Load some sample meshes
+    for (var i = 0; i < 1000; i++) {
+      makeAsteroid(Assets.get("ast1"));
+    }
 
     var m = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshBasicMaterial());
     m.scale.set(10, 10, 10);
@@ -171,6 +189,14 @@ function onWindowResize() {
 
 // RENDER LOOP
 
+function moveAsteroids(scale) {
+  for (a in asteroids) {
+    a.x += a.vx * scale;
+    a.y += a.vy * scale;
+    a.z += a.vz * scale;
+  }
+};
+
 var last_time = null;
 function animate(timestamp) {
 
@@ -196,6 +222,8 @@ function animate(timestamp) {
   if (keyboard.pressed('S')) {
     player_ship_mesh.position.add(ship_forward.negate());
   }
+
+  moveAsteroids(scale);
 
   render();
   stats.update();
