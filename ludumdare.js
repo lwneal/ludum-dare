@@ -144,13 +144,12 @@ function init() {
 
     var m = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshLambertMaterial({color: 0xFF0000}));
     m.scale.set(1, 1, 1);
-    m.position.z = 10;
     scene.add(m);
     player_ship_mesh = m;
 
     camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 2000000 );
-    camera.position.z = 5;
-    camera.position.y = 5;
+    camera.position.z = 10;
+    camera.position.y = 10;
     camera.lookAt(new THREE.Vector3(0, 0, -5));
     player_ship_mesh.add(camera);
 
@@ -199,7 +198,7 @@ function animate(timestamp) {
 
   var ship_forward = new THREE.Vector3(0, 0, -1);
   ship_forward.applyQuaternion(player_ship_mesh.quaternion);
-  ship_forward.multiplyScalar(scale * 300.0);
+  ship_forward.multiplyScalar(scale * 500.0);
 
   if (keyboard.pressed('W')) {
     player_ship_mesh.position.add(ship_forward);

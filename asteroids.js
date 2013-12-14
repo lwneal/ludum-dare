@@ -28,21 +28,24 @@ function asteroid() {
   this.rvz = (Math.random() - 0.5) * 0.1;
   scene.add(this.mesh);
 
-  this.planeMesh = new THREE.Mesh(new THREE.CircleGeometry(this.r), new THREE.LineBasicMaterial());
-  this.planeMesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+  var mat = new THREE.MeshBasicMaterial({
+    color: 0x444444,
+    wireframe: true
+  });
+  this.planeMesh = new THREE.Mesh(new THREE.CircleGeometry(this.r / 10, 30), mat);
+  this.planeMesh.rotateOnAxis(new THREE.Vector3(-1, 0, 0), Math.PI / 2);
   scene.add(this.planeMesh);
 
   this.bounds = {obj: this};
-  self = this;
   this.updateBounds = function() {
-    self.bounds.x = self.mesh.position.x - self.r;
-    self.bounds.y = self.mesh.position.z - self.r;
-    self.bounds.width = 2 * self.r;
-    self.bounds.height = 2 * self.r;
-    self.obj = self;
+    this.bounds.x = this.mesh.position.x - this.r;
+    this.bounds.y = this.mesh.position.z - this.r;
+    this.bounds.width = 2 * this.r;
+    this.bounds.height = 2 * this.r;
+    this.bounds.obj = this;
 
-    self.planeMesh.position.x = self.mesh.position.x;
-    self.planeMesh.position.z = self.mesh.position.z;
+    this.planeMesh.position.set(this.mesh.position.x, 0, this.mesh.position.z);
+    //console.log("Set plane mesh position = " + self.planeMesh.position.x);
   };
   this.updateBounds();
 };
@@ -112,7 +115,7 @@ var Asteroid = (function() {
   var update = function(scale) {
     for (var i = 0; i < asteroids.length; i++) {
       var ast = asteroids[i];
-      asteroidMove(ast, scale);
+      //asteroidMove(ast, scale);
       ast.updateBounds();
 
       // lol collision detection
