@@ -16,9 +16,9 @@ function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial());
   this.r = rand(1, 100) * Math.random() * Math.random() * Math.random();
   this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
-  this.mesh.position.x = (Math.random() - 0.5) * 10000;
-  this.mesh.position.y = (Math.random() - 0.5) * 1000;
-  this.mesh.position.z = (Math.random() - 0.5) * 10000;
+  this.mesh.position.x = (Math.random() - 0.5) * 1000;
+  this.mesh.position.y = (Math.random() - 0.5) * 100;
+  this.mesh.position.z = (Math.random() - 0.5) * 1000;
   this.vx = (Math.random() - 0.5) * 1000;
   this.vy = (Math.random() - 0.5) * 100;
   this.vz = (Math.random() - 0.5) * 1000;
@@ -28,22 +28,25 @@ function asteroid() {
   this.rvz = (Math.random() - 0.5) * 0.1;
   scene.add(this.mesh);
 
-  this.planeMesh = new THREE.Mesh(new THREE.CircleGeometry(this.r), new THREE.LineBasicMaterial());
-  this.planeMesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+  var mat = new THREE.MeshBasicMaterial({
+    color: 0x444444,
+    wireframe: true
+  });
+  this.planeMesh = new THREE.Mesh(new THREE.CircleGeometry(this.r / 10, 30), mat);
+  this.planeMesh.rotateOnAxis(new THREE.Vector3(-1, 0, 0), Math.PI / 2);
   scene.add(this.planeMesh);
 
   this.bounds = {obj: this};
-  self = this;
   this.updateBounds = function() {
-    var boundsSize = 0.1;
-    self.bounds.x = self.mesh.position.x - self.r * boundsSize;
-    self.bounds.y = self.mesh.position.z - self.r * boundsSize;
-    self.bounds.width = 2 * self.r * boundsSize;
-    self.bounds.height = 2 * self.r * boundsSize;
-    self.obj = self;
+    var radiusMult = 1.0;
+    this.bounds.x = this.mesh.position.x - this.r * radiusMult;
+    this.bounds.y = this.mesh.position.z - this.r * radiusMult;
+    this.bounds.width = 2 * this.r* radiusMult;
+    this.bounds.height = 2 * this.r* radiusMult;
+    this.bounds.obj = this;
 
-    self.planeMesh.position.x = self.mesh.position.x;
-    self.planeMesh.position.z = self.mesh.position.z;
+    this.planeMesh.position.set(this.mesh.position.x, 0, this.mesh.position.z);
+    //console.log("Set plane mesh position = " + self.planeMesh.position.x);
   };
   this.updateBounds();
 };
@@ -105,7 +108,7 @@ function asteroidInteract(ast, bst, scale) {
 
 var Asteroid = (function() {
   var init = function(geom_name) {
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < 100; i++) {
       asteroids.push(new asteroid());
     }
   };
