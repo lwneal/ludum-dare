@@ -1,5 +1,5 @@
-var GRAVITATIONAL_CONSTANT = 0.01;
-var PLANE_ATTRACTION_COEFF = 10;
+var GRAVITATIONAL_CONSTANT = 0.50;
+var PLANE_ATTRACTION_COEFF = 40;
 
 function rand(min, max) {
   return min + (Math.random() * (max - min));
@@ -39,14 +39,16 @@ var Asteroid = (function() {
   var update = function(scale) {
     for (var i = 0; i < asteroids.length; i++) {
       var ast = asteroids[i];
+
+      var astMass = ast.r * ast.r;
       var forward = new THREE.Vector3(ast.vx, ast.vy, ast.vz);
       forward.multiplyScalar(scale);
       ast.mesh.position.add(forward);
 
       // wobble
-      ast.vx += rand(-1,1);
-      ast.vy += rand(-1,1);
-      ast.vz += rand(-1,1);
+      ast.vx += rand(-1,1) * scale;
+      ast.vy += rand(-1,1) * scale;
+      ast.vz += rand(-1,1) * scale;
 
       // dampen
       ast.vx *= 0.999;
@@ -55,12 +57,18 @@ var Asteroid = (function() {
 
       // Keep things close to the xz plane
       if (ast.mesh.position.y > 0) {
-        ast.vy -= PLANE_ATTRACTION_COEFF;
+        ast.vy -= PLANE_ATTRACTION_COEFF * scale;
       } else {
-        ast.vy += PLANE_ATTRACTION_COEFF;
+        ast.vy += PLANE_ATTRACTION_COEFF * scale;
       }
 
-      var astMass = ast.r * ast.r;
+      // rotate around!
+      var axx = new THREE.Vector3(1, 0, 0);
+      var axy = new THREE.Vector3(0, 1, 0);
+      var axz = new THREE.Vector3(0, 0, 1);
+      ast.mesh.rotateOnAxis(axx, ast.rvx * scale);
+      ast.mesh.rotateOnAxis(axy, ast.rvy * scale);
+      ast.mesh.rotateOnAxis(axz, ast.rvz * scale);
 
       // lol collision detection
       for (var j = 0; j < asteroids.length; j++) {
@@ -73,14 +81,18 @@ var Asteroid = (function() {
         var dz = (bst.mesh.position.z - ast.mesh.position.z);
 
         var distSq = dx*dx + dy*dy + dz*dz;
-        bst.vx -= (dx / distSq) * astMass * GRAVITATIONAL_CONSTANT
-        bst.vy -= (dy / distSq) * astMass * GRAVITATIONAL_CONSTANT;
-        bst.vz -= (dz / distSq) * astMass * GRAVITATIONAL_CONSTANT;
+        bst.vx -= (dx / distSq) * astMass * GRAVITATIONAL_CONSTANT * scale;
+        bst.vy -= (dy / distSq) * astMass * GRAVITATIONAL_CONSTANT * scale;
+        bst.vz -= (dz / distSq) * astMass * GRAVITATIONAL_CONSTANT * scale;
 
         if (vecDistanceSq(ast.mesh.position, bst.mesh.position) < ast.r*ast.r + bst.r*bst.r) {
           ast.vx += ast.mesh.position.x - bst.mesh.position.x;
           ast.vy += ast.mesh.position.y - bst.mesh.position.y;
           ast.vz += ast.mesh.position.z - bst.mesh.position.z;
+
+          ast.rvx += Math.random() - 0.5;
+          ast.rvy += Math.random() - 0.5;
+          ast.rvz += Math.random() - 0.5;
         }
       }
 
