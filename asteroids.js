@@ -29,7 +29,6 @@ function asteroid() {
   scene.add(this.mesh);
 
   var mat = new THREE.MeshBasicMaterial({
-    color: 0x444444,
     wireframe: true
   });
   this.planeMesh = new THREE.Mesh(new THREE.CircleGeometry(this.r, 15), mat);
@@ -45,7 +44,12 @@ function asteroid() {
     this.bounds.obj = this;
 
     this.planeMesh.position.set(this.mesh.position.x, 0, this.mesh.position.z);
-    //console.log("Set plane mesh position = " + self.planeMesh.position.x);
+    if (Math.abs(this.mesh.position.y) < this.r * 2) {
+      this.planeMesh.material.color.setHex(0xFF0000);
+    }
+    else {
+      this.planeMesh.material.color.setHex(0x444444);
+    }
   };
   this.updateBounds();
 };
