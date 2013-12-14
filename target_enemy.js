@@ -1,7 +1,7 @@
 var TargetEnemy = (function(){
   var init = function(geom_name) {
     this.rot = 0.0;
-    this.mesh = new THREE.Mesh(Assets.get(geom_name), new THREE.MeshBasicMaterial());
+    this.mesh = new THREE.Mesh(Assets.get(geom_name), new THREE.MeshLambertMaterial());
     this.mesh.scale.set(100, 100, 100);
     scene.add(this.mesh);
   }

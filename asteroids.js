@@ -14,8 +14,8 @@ function vecDistanceSq(a, b) {
 
 function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial());
-  this.r = rand(1, 1000) * Math.random() * Math.random() * Math.random();
-  this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
+  this.r = rand(1, 1000) * Math.random() * Math.random() * Math.random() * 10;
+  this.mesh.scale.set(1 * this.r / 10, 1 *this.r / 10, 1 * this.r / 10);
   this.mesh.position.x = (Math.random() - 0.5) * 10000;
   this.mesh.position.y = (Math.random() - 0.5) * 1000;
   this.mesh.position.z = (Math.random() - 0.5) * 10000;
@@ -27,6 +27,24 @@ function asteroid() {
   this.rvy = (Math.random() - 0.5) * 0.1;
   this.rvz = (Math.random() - 0.5) * 0.1;
   scene.add(this.mesh);
+
+  this.planeMesh = new THREE.Mesh(new THREE.CircleGeometry(this.r), new THREE.LineBasicMaterial());
+  this.planeMesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+  scene.add(this.planeMesh);
+
+  this.bounds = {obj: this};
+  self = this;
+  this.updateBounds = function() {
+    self.bounds.x = self.mesh.position.x - self.r;
+    self.bounds.y = self.mesh.position.z - self.r;
+    self.bounds.width = 2 * self.r;
+    self.bounds.height = 2 * self.r;
+    self.obj = self;
+
+    self.planeMesh.position.x = self.mesh.position.x;
+    self.planeMesh.position.z = self.mesh.position.z;
+  };
+  this.updateBounds();
 };
 
 function asteroidMove(ast, scale) {
@@ -95,6 +113,7 @@ var Asteroid = (function() {
     for (var i = 0; i < asteroids.length; i++) {
       var ast = asteroids[i];
       asteroidMove(ast, scale);
+      ast.updateBounds();
 
       // lol collision detection
       for (var j = 0; j < asteroids.length; j++) {
