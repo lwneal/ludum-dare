@@ -1,6 +1,6 @@
 var TargetEnemy = (function(){
   var init = function(geom_name) {
-    this.r = 100;
+    this.r = 10;
 
     this.mesh = new THREE.Mesh(Assets.get(geom_name), new THREE.MeshLambertMaterial());
     this.mesh.position.set(0, 0, 0);
@@ -14,8 +14,6 @@ var TargetEnemy = (function(){
   var update = function(scale) {
     var forward = new THREE.Vector3(0, 0, -1);
     forward.applyQuaternion(this.mesh.quaternion);
-    forward.multiplyScalar(scale * 100.0);
-    this.mesh.position.add(forward);
 
     // Avoid asteroids
     var candidates = quadtree.retrieve({x: this.mesh.position.x - this.r * 4, y: this.mesh.position.z - this.r * 4, width: this.r * 8, height: this.r * 8});
@@ -24,6 +22,11 @@ var TargetEnemy = (function(){
     var closest = null;
     self = this;
     _.each(candidates, function(astb) {
+      // Only consider asteroids close to the plane
+      if (Math.abs(astb.obj.mesh.position.y) > astb.obj.r * 2.0) {
+        return;
+      }
+
       var diff = new THREE.Vector3().subVectors(self.mesh.position, astb.obj.mesh.position);
       var dist = diff.lengthSq();
       if (dist < closest_dist) {
@@ -34,9 +37,12 @@ var TargetEnemy = (function(){
 
     if (closest !== null) {
       var closest_diff = new THREE.Vector3().subVectors(closest.obj.mesh.position, this.mesh.position).normalize();
-      var angle = Math.acos(forward.dot(closest_diff));
-      if (angle == angle) {
-        this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), angle * scale);
+      var dot = forward.dot(closest_diff);
+      if (dot > 0) {
+        var angle = Math.acos(forward.dot(closest_diff));
+        if (angle == angle) {
+          this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), 2.0 * angle * scale);
+        }
       }
     }
     else {
@@ -44,6 +50,8 @@ var TargetEnemy = (function(){
       this.desired_turn += scale / 4.0;
     }
 
+    forward.multiplyScalar(scale * 50.0);
+    this.mesh.position.add(forward);
     this.updateBounds();
   };
 
@@ -54,9 +62,14 @@ var TargetEnemy = (function(){
     this.bounds.height = this.r * 2;
   };
 
+  var type = function() {
+    return "target_enemy";
+  };
+
   return {
     "init": init,
     "update": update,
     "updateBounds": updateBounds,
+    "type": type,
   };
 })();
