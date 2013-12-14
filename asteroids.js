@@ -1,5 +1,5 @@
 var GRAVITATIONAL_CONSTANT = 0.90;
-var PLANE_ATTRACTION_COEFF = 90;
+var PLANE_ATTRACTION_COEFF = 10;
 
 function rand(min, max) {
   return min + (Math.random() * (max - min));
@@ -28,17 +28,21 @@ function asteroid() {
   this.rvz = (Math.random() - 0.5) * 0.1;
   scene.add(this.mesh);
 
-  var mat = new THREE.MeshBasicMaterial({
+  var planeMat = new THREE.MeshBasicMaterial({
     wireframe: true
   });
-  this.planeMesh = new THREE.Mesh(new THREE.CircleGeometry(this.r, 15), mat);
+  this.planeMesh = new THREE.Mesh(new THREE.CircleGeometry(this.r, 15), planeMat);
   this.planeMesh.rotateOnAxis(new THREE.Vector3(-1, 0, 0), Math.PI / 2);
   scene.add(this.planeMesh);
 
-  this.boxMesh = new THREE.Mesh(new THREE.CubeGeometry(this.r*2, this.r*2, this.r*2), mat);
+  var boxMat = new THREE.MeshBasicMaterial({
+    wireframe: true
+  });
+  this.boxMesh = new THREE.Mesh(new THREE.CubeGeometry(this.r*2, this.r*2, this.r*2), boxMat);
   scene.add(this.boxMesh);
 
   this.bounds = {obj: this};
+  this.type = function() { return "asteroid"; };
   updateBounds(this);
 };
 
@@ -77,13 +81,11 @@ function asteroidMove(ast, scale) {
   ast.vz *= 0.99;
 
   // Keep things close to the xz plane
-  /*
   if (ast.mesh.position.y > 0) {
     ast.vy -= PLANE_ATTRACTION_COEFF * scale;
   } else {
     ast.vy += PLANE_ATTRACTION_COEFF * scale;
   }
-  */
 
   // rotate around!
   var axx = new THREE.Vector3(1, 0, 0);
@@ -119,6 +121,31 @@ function asteroidInteract(ast, bst, scale) {
   }
 }
 
+function calculateGravityCenter() {
+  var gravity = new THREE.Vector3(0,0,0);
+  for (i in asteroids) {
+    var ast = asteroids[i];
+    gravity.x += ast.mesh.position.x;
+    gravity.y += ast.mesh.position.y;
+    gravity.z += ast.mesh.position.z;
+    ast.mesh.material.color.setHex(0xFFFFFF);
+  }
+  gravity.x /= asteroids.length;
+  gravity.y /= asteroids.length;
+  gravity.z /= asteroids.length;
+  return gravity;
+}
+
+var gravitate = function(obj, c) {
+  var dx = obj.mesh.position.x - c.x;
+  var dy = obj.mesh.position.y - c.y;
+  var dz = obj.mesh.position.z - c.z;
+
+  obj.vx -= dx * .001;
+  obj.vy -= dy * .001;
+  obj.vz -= dz * .001;
+};
+
 var Asteroid = (function() {
   var init = function(geom_name) {
     for (var i = 0; i < 100; i++) {
@@ -127,8 +154,11 @@ var Asteroid = (function() {
   };
 
   var update = function(scale) {
+    var gravity = calculateGravityCenter();
+
     for (var i = 0; i < asteroids.length; i++) {
       var ast = asteroids[i];
+      gravitate(ast, gravity);
       asteroidMove(ast, scale);
     }
   }
