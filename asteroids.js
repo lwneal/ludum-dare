@@ -1,5 +1,5 @@
 var GRAVITATIONAL_CONSTANT = 0.90;
-var PLANE_ATTRACTION_COEFF = 10;
+var PLANE_ATTRACTION_COEFF = 40;
 
 function rand(min, max) {
   return min + (Math.random() * (max - min));
@@ -86,9 +86,9 @@ function asteroidMove(ast, scale) {
   ast.vz *= 0.99;
 
   // Keep things close to the xz plane
-  if (ast.mesh.position.y > 0) {
+  if (ast.mesh.position.y > 100) {
     ast.mesh.position.y -= PLANE_ATTRACTION_COEFF * scale;
-  } else {
+  } else if (ast.mesh.position.y < -100) {
     ast.mesh.position.y += PLANE_ATTRACTION_COEFF * scale;
   }
 
