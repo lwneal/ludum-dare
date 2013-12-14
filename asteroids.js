@@ -13,16 +13,16 @@ function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial());
   this.r = rand(5, 10);
   this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
-  this.mesh.position.x = rand(BOUNDS.x/2, (BOUNDS.x + BOUNDS.width)/2);
+  this.mesh.position.x = rand(BOUNDS.x, (BOUNDS.x + BOUNDS.width));
   this.mesh.position.y = rand(BOTTOM, TOP);
-  this.mesh.position.z = rand(BOUNDS.y/2, (BOUNDS.y + BOUNDS.height)/2);
+  this.mesh.position.z = rand(BOUNDS.y, (BOUNDS.y + BOUNDS.height));
 
   var pos = new THREE.Vector3(this.mesh.position);
   pos.normalize();
 
-  this.vx = (Math.random() - 0.5) + 20 * pos.x;
+  this.vx = (Math.random() - 0.5) * 20;
   this.vy = (Math.random() - 0.5) * 10;
-  this.vz = (Math.random() - 0.5) - 20 * pos.z;
+  this.vz = (Math.random() - 0.5) * 20;
 
   this.rvx = (Math.random() - 0.5) * 0.1;
   this.rvy = (Math.random() - 0.5) * 0.1;
