@@ -130,6 +130,21 @@ function init() {
   stats.domElement.style.top = '0px';
   container.appendChild( stats.domElement );
 
+  var rand = function(min, max) {
+    return min + (Math.random() * (max - min));
+  };
+
+  var makeAsteroid = function(x,y,z) {
+    var asteroid = {};
+    asteroid.x = rand(-50 * 1000, 50 * 1000);
+    asteroid.y = rand(-50 * 1000, 50 * 1000);
+    asteroid.z = rand(-50 * 1000, 50 * 1000);
+    asteroid.vx = rand(-50 * 10, 50 * 10);
+    asteroid.vy = rand(-50 * 10, 50 * 10);
+    asteroid.vz = rand(-50 * 10, 50 * 10);
+    asteroids.push(asteroid);
+  };
+
   // Load some sample meshes
   loader.load("assets/ast1.js", function(geometry) {
     for (var i = 0; i < 1000; i++) {
@@ -170,6 +185,12 @@ function onWindowResize() {
 
 // RENDER LOOP
 
+function moveAsteroids(scale) {
+  for (a in asteroids) {
+
+  }
+};
+
 var last = null;
 function animate(timestamp) {
 
@@ -195,6 +216,8 @@ function animate(timestamp) {
   if (keyboard.pressed('S')) {
     player_ship_mesh.position.add(ship_forward.negate());
   }
+
+  moveAsteroids(scale);
 
   render();
   stats.update();
