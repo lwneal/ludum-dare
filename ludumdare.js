@@ -15,8 +15,8 @@ var player_ship_mesh;
 var clock = new THREE.Clock();
 
 var asteroids = [];
-var bounds = {x: -10000, y: -10000, width: 10000, height: 10000};
-var quadtree = new QuadTree(bounds);
+var bounds = {x: -10000, y: -10000, width: 20000, height: 20000};
+var quadtree = new Quadtree(bounds);
 
 init();
 
@@ -111,10 +111,10 @@ function init() {
   var BLACK = 0x000000;
   var RED = 0xFF0000;
   var BLUE = 0x0000FF;
-  var ambientLight = new THREE.AmbientLight( 0x222222 );
+  var ambientLight = new THREE.AmbientLight( 0x666666 );
   scene.add( ambientLight );
 
-  var directionalLight = new THREE.DirectionalLight( 0x888888, 2 );
+  var directionalLight = new THREE.DirectionalLight( 0x222222, 2 );
   directionalLight.position.set( 1, 1, 0.5 ).normalize();
   scene.add( directionalLight );
 
@@ -205,6 +205,8 @@ function animate(timestamp) {
 
   requestAnimationFrame( animate );
 
+  console.log('how many asteroids? ' + asteroids.length);
+
   if (last_time === null) last_time = timestamp;
   var scale = (timestamp - last_time) / 1000.0;
   last_time = timestamp;
@@ -236,23 +238,14 @@ function animate(timestamp) {
   for (i in asteroids) {
     var ast = asteroids[i];
     var others = quadtree.retrieve(ast.bounds);
+    gravitate
+
     for (j in others) {
       var other_bounds = others[j];
       var other_ast = other_bounds.obj;
       if (other_ast == ast) continue;
-      //var diff = new THREE.Vector3(ast.mesh.position);
-      //diff.sub(other_ast.mesh.position);
-      var diff = new THREE.Vector3().subVectors(ast.mesh.position, other_ast.mesh.position);
-      //console.log("diff.x=" + diff.x);
-      var dist = diff.lengthSq();
-      if (dist < 200.0 * 200.0 * 2.0) {
-        ast.mesh.material.color.setHex(0xFF0000);
-        other_ast.mesh.material.color.setHex(0xFF0000);
-      }
-      else {
-        ast.mesh.material.color.setHex(0xFFFFFF);
-        other_ast.mesh.material.color.setHex(0xFFFFFF);
-      }
+
+      asteroidInteract(ast, other_ast, scale);
     }
   }
 
