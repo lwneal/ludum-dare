@@ -30,8 +30,9 @@ var PlayerShip = (function(){
 
     var ship_forward = new THREE.Vector3(0, 0, -1);
     ship_forward.applyQuaternion(this.mesh.quaternion);
-    ship_forward.multiplyScalar(scale * 500.0);
+    ship_forward.multiplyScalar(scale * 100.0);
 
+    this.mesh.position.add(ship_forward);
     if (keyboard.pressed('W')) {
       this.mesh.position.add(ship_forward);
     }

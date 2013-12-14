@@ -11,7 +11,7 @@ function vecDistanceSq(a, b) {
 
 function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial({color: 0x606060, ambient: 0x202020}));
-  this.r = rand(5, 10);
+  this.r = rand(8, 30);
   this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
   this.mesh.position.x = rand(BOUNDS.x, (BOUNDS.x + BOUNDS.width));
   this.mesh.position.y = rand(BOTTOM, TOP);
@@ -21,7 +21,7 @@ function asteroid() {
   pos.normalize();
 
   this.vx = (Math.random() - 0.5) * 20;
-  this.vy = (Math.random() - 0.5) * 10;
+  this.vy = (Math.random() - 0.5) * 40;
   this.vz = (Math.random() - 0.5) * 20;
 
   this.rvx = (Math.random() - 0.5) * 0.1;
@@ -81,18 +81,8 @@ function asteroidMove(ast, scale) {
   ast.vy += rand(-1,1) * scale;
   ast.vz += rand(-1,1) * scale;
 
-  // dampen
-  ast.vx *= 0.999;
-  ast.vy *= 0.999;
-  ast.vz *= 0.999;
-
   // Keep things close to the xz plane
-  ast.vy -= 0.02 * ast.mesh.position.y;
-  if (ast.mesh.position.y > TOP/2) {
-    ast.mesh.position.y -= PLANE_ATTRACTION_COEFF * scale;
-  } else if (ast.mesh.position.y < BOTTOM/2) {
-    ast.mesh.position.y += PLANE_ATTRACTION_COEFF * scale;
-  }
+  //ast.vy -= 0.02 * ast.mesh.position.y;
 
   // rotate around!
   ast.mesh.rotateOnAxis(axx, ast.rvx * scale);
@@ -111,6 +101,12 @@ function asteroidMove(ast, scale) {
   }
   if (ast.mesh.position.z > BOUNDS.y + BOUNDS.height) {
     ast.mesh.position.z -= BOUNDS.height;
+  }
+  if (ast.mesh.position.y < BOTTOM) {
+    ast.mesh.position.y += (TOP - BOTTOM);
+  }
+  if (ast.mesh.position.y > TOP) {
+    ast.mesh.position.y -= (TOP - BOTTOM);
   }
 
   updateBounds(ast);
@@ -183,7 +179,7 @@ var gravitate = function(obj, c, scale) {
 
 var Asteroid = (function() {
   var init = function(geom_name) {
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < 600; i++) {
       asteroids.push(new asteroid());
     }
   };
