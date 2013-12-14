@@ -10,7 +10,7 @@ function vecDistanceSq(a, b) {
 }
 
 function asteroid() {
-  this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial());
+  this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial({color: 0x606060, ambient: 0x202020}));
   this.r = rand(8, 30);
   this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
   this.mesh.position.x = rand(BOUNDS.x, (BOUNDS.x + BOUNDS.width));
@@ -59,10 +59,10 @@ function updateBounds(ast) {
 
   ast.planeMesh.position.set(ast.mesh.position.x, 0, ast.mesh.position.z);
   if (Math.abs(ast.mesh.position.y) < ast.r * 2) {
-    ast.planeMesh.material.color.setHex(0xFF0000);
+    ast.planeMesh.material.color.setHex(0x600000);
   }
   else {
-    ast.planeMesh.material.color.setHex(0x444444);
+    ast.planeMesh.material.color.setHex(0x111111);
   }
 
   //ast.boxMesh.position.set(ast.mesh.position.x, ast.mesh.position.y, ast.mesh.position.z);
