@@ -88,7 +88,7 @@ function init() {
     new THREE.ParticleSystemMaterial( { color: 0x1a1a1a, size: 1, sizeAttenuation: false } )
   ];
 
-  for ( i = 10; i < 300; i ++ ) {
+  for ( i = 10; i < 30; i ++ ) {
 
     stars = new THREE.ParticleSystem( starsGeometry[ i % 2 ], starsMaterials[ i % 6 ] );
 
@@ -168,8 +168,9 @@ function init() {
     player_ship_mesh = m;
 
     camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
-    camera.position.z = 50;
-    camera.position.y = 25;
+    camera.position.z = 5;
+    camera.position.y = 5;
+    camera.lookAt(new THREE.Vector3(0, 0, -5));
     player_ship_mesh.add(camera);
 
     window.addEventListener( 'resize', onWindowResize, false );
