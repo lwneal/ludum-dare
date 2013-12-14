@@ -179,6 +179,26 @@ function updateQuadtree() {
   }
 }
 
+function collisions(obj, obj_bounds) {
+  if (typeof obj_bounds === 'undefined') {
+    obj_bounds = obj.bounds;
+  }
+
+  var result = [];
+  var others = quadtree.retrieve(obj_bounds);
+  for (j in others) {
+    var oth_bounds = others[j];
+    var oth = oth_bounds.obj;
+
+    var diff = new THREE.Vector3().subVectors(obj.mesh.position, oth.mesh.position);
+    var dist = diff.lengthSq();
+    if (dist <= (obj.r*obj.r) + (oth.r*oth.r)) {
+      result.push(oth);
+    }
+  }
+  return result;
+}
+
 // RENDER LOOP
 var last_time = null;
 function animate(timestamp) {
