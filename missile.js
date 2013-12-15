@@ -64,33 +64,24 @@ function Missile(friendly) {
   this.update = function(scale) {
     var target = (this.friendly) ? TargetEnemy : PlayerShip;
 
-    var forward = new THREE.Vector3(0, 0, -1).applyQuaternion(this.mesh.quaternion);
-    var right = new THREE.Vector3(1, 0, 0).applyQuaternion(this.mesh.quaternion);
-    var to_target = new THREE.Vector3().subVectors(target.mesh.position, this.mesh.position).normalize();
+    var turn = turn_towards(this.mesh, target.mesh);
+    this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), 4.0 * turn * scale);
 
-    var fdot = forward.dot(to_target);
-    var turn = (fdot > 0) ? (1 - fdot) : 1;
-    var dir = right.dot(to_target);
-    if (dir > 0) turn = -turn;
-    
-    this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), 8.0 * turn * scale);
-    forward.multiplyScalar(scale * 25.0);
+    var forward = new THREE.Vector3(0, 0, -1).applyQuaternion(this.mesh.quaternion);
+    var speed = (1.0 - Math.abs(turn)) * 110.0;
+    forward.multiplyScalar(scale * speed);
     this.mesh.position.add(forward);
 
-
-    // Check for collisions
-    var objs = collisions(this);
-    _.each(objs, function(o) {
-      if (o.type() == "asteroid") {
-        this.remove();
-      }
-    });
-
     //this.particles.update(scale);
+    this.updateBounds();
   };
 
-  this.remove = function() {
-    scene.remove(this.mesh);
-    missiles = _.without(missiles, this);
+  this.updateBounds = function() {
+    this.bounds.x = this.mesh.position.x - this.r;
+    this.bounds.y = this.mesh.position.z - this.r;
+    this.bounds.width = this.r * 2;
+    this.bounds.height = this.r * 2;
   };
+
+  this.type = function() { return "missile" };
 }
