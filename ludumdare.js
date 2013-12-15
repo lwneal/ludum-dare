@@ -14,10 +14,10 @@ var clock = new THREE.Clock();
 
 var asteroids = [];
 var missiles = [];
-var GRAVITATIONAL_CONSTANT = 0.00;
+var GRAVITATIONAL_CONSTANT = 0.1;
 var PLANE_ATTRACTION_COEFF = 40;
-var TOP = 80;
-var BOTTOM = -40;
+var TOP = 100;
+var BOTTOM = -100;
 var BOUNDS = {x: -1000, y: -1000, width: 2000, height: 2000};
 var quadtree = new Quadtree(BOUNDS);
 
@@ -89,9 +89,8 @@ function init() {
   loader.load("assets/missile.js", Assets.asset("missile"));
 
   Assets.callback = function() {
-    Asteroid.init();
-
     PlayerShip.init();
+    AsteroidField.init();
 
     camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
     camera.position.z = 10;
@@ -173,7 +172,7 @@ function animate(timestamp) {
   last_time = timestamp;
 
   PlayerShip.update(scale);
-  Asteroid.update(scale);
+  AsteroidField.update(scale);
   TargetEnemy.update(scale);
   _.each(missiles, function(m) {
     m.update(scale);
