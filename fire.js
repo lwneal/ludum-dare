@@ -4,7 +4,7 @@
  * color: 0xFF0000 for red
  * lifetime: in seconds, average lifetime
  */
-var FireParticleSource = function(source, density, color, lifetime) {
+var FireParticleSource = function(source, density, color) {
   this.source = source;
   this.density= density;
   this.color = color;
