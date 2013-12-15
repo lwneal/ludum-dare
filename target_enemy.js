@@ -3,7 +3,7 @@ var TargetEnemy = (function(){
     this.r = 10;
 
     this.mesh = new THREE.Mesh(Assets.get(geom_name), new THREE.MeshLambertMaterial({color: 0xFF0000, ambient: 0x800000, fog: false}));
-    this.mesh.position.set(0, 0, -400);
+    this.mesh.position.set(1200, 0, -1200);
     this.mesh.scale.set(this.r, this.r, this.r);
     scene.add(this.mesh);
 
@@ -24,35 +24,35 @@ var TargetEnemy = (function(){
     forward.applyQuaternion(this.mesh.quaternion);
 
     // Avoid asteroids
-    var candidates = quadtree.retrieve({x: this.mesh.position.x - this.r * 4, y: this.mesh.position.z - this.r * 4, width: this.r * 8, height: this.r * 8});
+    var candidates = asteroids;
 
     var closest_dist = Infinity;
     var closest = null;
     self = this;
-    _.each(candidates, function(astb) {
+    _.each(candidates, function(ast) {
       // Only consider asteroids close to the plane
-      if (Math.abs(astb.obj.mesh.position.y) > astb.obj.r * 2.0) {
+      if (Math.abs(ast.mesh.position.y) > ast.r * 2.0) {
         return;
       }
 
-      var diff = new THREE.Vector3().subVectors(self.mesh.position, astb.obj.mesh.position);
+      var diff = new THREE.Vector3().subVectors(self.mesh.position, ast.mesh.position);
       var dist = diff.lengthSq();
       if (dist < closest_dist) {
         closest_dist = dist;
-        closest = astb;
+        closest = ast;
       }
     });
 
     if (closest !== null) {
       var turn = turn_towards(this.mesh, closest.mesh);
-      this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), -2.0 * turn * scale);
+      this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), -1 * turn * scale);
     }
     else {
       //this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.sin(this.desired_turn) * scale);
       this.desired_turn += scale / 4.0;
     }
 
-    forward.multiplyScalar(scale * 100.0);
+    forward.multiplyScalar(scale * 105.0);
     this.mesh.position.add(forward);
     this.updateBounds();
 

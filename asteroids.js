@@ -13,8 +13,14 @@ function vecDistanceSq(a, b) {
 }
 
 function isTooCloseToOrigin(position) {
-  return -100 < position.x && position.x < 100
-    && -100 < position.z && position.z < 100;
+  var DIST = 200;
+  return -DIST < position.x && position.x < DIST
+    && -DIST < position.z && position.z < DIST;
+}
+
+function signOf(x) {
+  if (x > 0) return 1;
+  return -1;
 }
 
 function asteroid() {
@@ -24,19 +30,26 @@ function asteroid() {
   this.r = rand(8, 30);
   this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
   this.mesh.position.x = rand(BOUNDS.x, (BOUNDS.x + BOUNDS.width));
-  this.mesh.position.y = rand(BOTTOM, TOP);
+  //this.mesh.position.y = rand(BOTTOM, TOP);
+  this.mesh.position.y = Math.randomGaussian(0.0, 60.0);
   this.mesh.position.z = rand(BOUNDS.y, (BOUNDS.y + BOUNDS.height));
 
   if (isTooCloseToOrigin(this.mesh.position)) {
-    this.mesh.position.x += BOUNDS.x / 2;
+    if (this.mesh.position.y > 0) {
+      this.mesh.position.y += 150;
+    }
+    else {
+      this.mesh.position.y -= 150;
+    }
   }
 
   var pos = new THREE.Vector3(this.mesh.position);
   pos.normalize();
 
-  this.vx = (Math.random() - 0.5) * 20;
+  this.vx = (Math.random() - 0.5) * 40;
   this.vy = (Math.random() - 0.5) * 40;
-  this.vz = (Math.random() - 0.5) * 20;
+  this.vy += signOf(this.mesh.position.y) * -3;
+  this.vz = (Math.random() - 0.5) * 40;
 
   this.rvx = (Math.random() - 0.5) * 0.1;
   this.rvy = (Math.random() - 0.5) * 0.1;
@@ -71,7 +84,7 @@ function asteroid() {
     this.bounds.obj = this;
 
     this.planeMesh.position.set(this.mesh.position.x, 0, this.mesh.position.z);
-    if (Math.abs(this.mesh.position.y) < this.r) {
+    if (Math.abs(this.mesh.position.y) < this.r * 1.5) {
       this.planeMesh.material.color.setHex(0x900000);
     }
     else {
@@ -125,6 +138,12 @@ function asteroidMove(ast, scale) {
   }
   */
 
+  // Try to keep asteroids moving toward plane
+  if ((ast.mesh.position.y < BOTTOM && rand(0, 100) < 10) ||
+      (ast.mesh.position.y > TOP && rand(0, 100) < 10)) {
+    ast.vy += signOf(ast.mesh.position.y) * -rand(1,5);
+  }
+
   ast.updateBounds();
 }
 
@@ -153,6 +172,11 @@ function asteroidRespawnCheck(ast, scale) {
     ast.mesh.position.x = TargetEnemy.mesh.position.x + spawnDirection.x;
     ast.mesh.position.y = TargetEnemy.mesh.position.y + spawnDirection.y;
     ast.mesh.position.z = TargetEnemy.mesh.position.z + spawnDirection.z;
+
+    // Try to spawn near the plane
+    ast.mesh.position.y = Math.randomGaussian(0.0, 50.0);
+    ast.vy += signOf(ast.mesh.position.y) * 5;
+    ast.vx += (Math.random() - 0.5) * 20;
   }
   
 }
@@ -224,7 +248,7 @@ var gravitate = function(obj, c, scale) {
 
 var Asteroid = (function() {
   var init = function(geom_name) {
-    for (var i = 0; i < 600; i++) {
+    for (var i = 0; i < 650; i++) {
       asteroids.push(new asteroid());
     }
   };

@@ -1,0 +1,23 @@
+      body {
+        background: black;
+        color: white;
+        font-family: monospace;
+        padding: 50px;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 300px;
+      }
+
+      p {
+        text-align: center;
+      }
+
+
+      a {
+        color: #0080FF;
+      }
+      a:visited {
+        color: #FF00FF;
+      }

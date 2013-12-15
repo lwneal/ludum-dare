@@ -16,8 +16,8 @@ var asteroids = [];
 var missiles = [];
 var GRAVITATIONAL_CONSTANT = 0.00;
 var PLANE_ATTRACTION_COEFF = 40;
-var TOP = 80;
-var BOTTOM = -40;
+var TOP = 40;
+var BOTTOM = -60;
 var BOUNDS = {x: -1000, y: -1000, width: 2000, height: 2000};
 var quadtree = new Quadtree(BOUNDS);
 
@@ -31,11 +31,8 @@ function spawn_enemy_missile() {
 
   em.mesh.position = PlayerShip.mesh.position.clone();
 
-  em.mesh.position.x += rand(200, 500);
-  em.mesh.position.z += rand(200, 500);
-  if (rand(0, 1) < 0.5) {
-    em.mesh.position.x = -em.mesh.position.x;
-  }
+  em.mesh.position.x += signOf(Math.random() - 0.5) * rand(150, 350);
+  em.mesh.position.z -= signOf(Math.random() - 0.5) * rand(150, 350);
 
   missiles.push(em);
 }

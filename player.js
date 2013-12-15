@@ -1,3 +1,5 @@
+var DEBUG = false;
+
 var NUM_PARTICLES = 1000;
 var PlayerShip = (function(){
   var init = function() {
@@ -21,17 +23,19 @@ var PlayerShip = (function(){
     if (keyboard.pressed('D')) {
       this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), -1.0 * scale);
     }
-    if (keyboard.pressed('Q')) {
-      this.mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), 1.0 * scale);
-    }
-    if (keyboard.pressed('E')) {
-      this.mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), -1.0 * scale);
-    }
-    if (keyboard.pressed('R')) {
-      this.mesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), 1.0 * scale);
-    }
-    if (keyboard.pressed('F')) {
-      this.mesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), -1.0 * scale);
+    if (DEBUG) {
+        if (keyboard.pressed('Q')) {
+        this.mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), 1.0 * scale);
+        }
+        if (keyboard.pressed('E')) {
+        this.mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), -1.0 * scale);
+        }
+        if (keyboard.pressed('R')) {
+        this.mesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), 1.0 * scale);
+        }
+        if (keyboard.pressed('F')) {
+        this.mesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), -1.0 * scale);
+        }
     }
 
     var ship_forward = new THREE.Vector3(0, 0, -1);
@@ -39,11 +43,14 @@ var PlayerShip = (function(){
     ship_forward.multiplyScalar(scale * 100.0);
 
     this.mesh.position.add(ship_forward);
-    if (keyboard.pressed('W')) {
-      this.mesh.position.add(ship_forward);
-    }
-    if (keyboard.pressed('S')) {
-      this.mesh.position.add(ship_forward.negate());
+
+    if (DEBUG) {
+        if (keyboard.pressed('W')) {
+        this.mesh.position.add(ship_forward);
+        }
+        if (keyboard.pressed('S')) {
+        this.mesh.position.add(ship_forward.negate());
+        }
     }
 
     if (keyboard.pressed('space')) {
