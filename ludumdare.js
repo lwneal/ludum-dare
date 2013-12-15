@@ -49,6 +49,7 @@ function init() {
   scene.add( directionalLight );
 
   renderer = new THREE.WebGLRenderer( { alpha: true } );
+  renderer.autoClear = false;
   renderer.setClearColor(BLACK, 1.0 );
   renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -165,28 +166,31 @@ function animate(timestamp) {
     for (var j = i + 1; j < asteroids.length; j++) {
       asteroidInteract(ast, asteroids[j], scale);
     }
-    /*
-    for (j in others) {
-      var other_bounds = others[j];
-      var other_ast = other_bounds.obj;
-      if (other_ast == ast) continue;
-
-    }
-    */
   }
 
   render();
   stats.update();
 
 }
+function renderWithOffset(scene, camera, x, y, z) {
+
+  var m = new THREE.Matrix4(PlayerShip.mesh.matrixWorld);
+  var t = new THREE.Matrix4();
+  t.makeTranslation(x,y,z);
+
+  
+
+  camera.position.x += x;
+  camera.position.y += y;
+  camera.position.z += z;
+  //PlayerShip.mesh.add(camera);
+
+  renderer.render(scene, camera);
+}
 
 function render() {
-
+  renderer.clear();
+  renderWithOffset(scene, camera, 0, 1000, 0);
   renderer.render( scene, camera );
-
-  camera.position.z += 100;
-  //renderer.render( scene, camera );
-
-  camera.position.z -= 100;
 }
 

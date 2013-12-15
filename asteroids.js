@@ -11,6 +11,8 @@ function vecDistanceSq(a, b) {
 
 function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial({color: 0x606060, ambient: 0x202020}));
+
+
   this.r = rand(8, 30);
   this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
   this.mesh.position.x = rand(BOUNDS.x, (BOUNDS.x + BOUNDS.width));
@@ -27,7 +29,9 @@ function asteroid() {
   this.rvx = (Math.random() - 0.5) * 0.1;
   this.rvy = (Math.random() - 0.5) * 0.1;
   this.rvz = (Math.random() - 0.5) * 0.1;
+
   scene.add(this.mesh);
+  scene.add(this.bizzaroMesh);
 
   var planeMat = new THREE.MeshBasicMaterial({
     wireframe: true
@@ -46,26 +50,24 @@ function asteroid() {
 
   this.bounds = {obj: this};
   this.type = function() { return "asteroid"; };
-  updateBounds(this);
-};
+  this.updateBounds = function() {
+    var radiusMult = 2.0;
+    this.bounds.x = this.mesh.position.x - this.r * radiusMult;
+    this.bounds.y = this.mesh.position.z - this.r * radiusMult;
+    this.bounds.width = 2 * this.r* radiusMult;
+    this.bounds.height = 2 * this.r* radiusMult;
+    this.bounds.obj = this;
 
-function updateBounds(ast) {
-  var radiusMult = 2.0;
-  ast.bounds.x = ast.mesh.position.x - ast.r * radiusMult;
-  ast.bounds.y = ast.mesh.position.z - ast.r * radiusMult;
-  ast.bounds.width = 2 * ast.r* radiusMult;
-  ast.bounds.height = 2 * ast.r* radiusMult;
-  ast.bounds.obj = ast;
+    this.planeMesh.position.set(this.mesh.position.x, 0, this.mesh.position.z);
+    if (Math.abs(this.mesh.position.y) < this.r) {
+      this.planeMesh.material.color.setHex(0x600000);
+    }
+    else {
+      this.planeMesh.material.color.setHex(0x111111);
+    }
 
-  ast.planeMesh.position.set(ast.mesh.position.x, 0, ast.mesh.position.z);
-  if (Math.abs(ast.mesh.position.y) < ast.r * 2) {
-    ast.planeMesh.material.color.setHex(0x600000);
-  }
-  else {
-    ast.planeMesh.material.color.setHex(0x111111);
-  }
-
-  //ast.boxMesh.position.set(ast.mesh.position.x, ast.mesh.position.y, ast.mesh.position.z);
+    //this.boxMesh.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
+  };
 };
 
 var axx = new THREE.Vector3(1, 0, 0);
@@ -102,14 +104,14 @@ function asteroidMove(ast, scale) {
   if (ast.mesh.position.z > BOUNDS.y + BOUNDS.height) {
     ast.mesh.position.z -= BOUNDS.height;
   }
-  if (ast.mesh.position.y < BOTTOM) {
-    ast.mesh.position.y += (TOP - BOTTOM);
+  if (ast.mesh.position.y < BOTTOM && ast.vy < 0) {
+    ast.vy *= -1;
   }
-  if (ast.mesh.position.y > TOP) {
-    ast.mesh.position.y -= (TOP - BOTTOM);
+  if (ast.mesh.position.y > TOP && ast.vy > 0) {
+    ast.vy *= -1;
   }
 
-  updateBounds(ast);
+  ast.updateBounds();
 }
 
 function asteroidCollide(ast, bst) {
