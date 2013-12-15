@@ -213,7 +213,6 @@ function animate(timestamp) {
   stats.update();
 
 }
-/*
 function renderWithOffset(scene, camera, x, y, z) {
   var translateMat = new THREE.Matrix4();
   translateMat.makeTranslation(x,y,z);
@@ -228,10 +227,8 @@ function renderWithOffset(scene, camera, x, y, z) {
   newCam.matrix = translateMat;
   renderer.render(scene, newCam);
 }
-*/
   
 function update_overlay(mesh) {
-  /*
   var p, v, percX, percY, left, top;
 
   // this will give us position relative to the world
@@ -255,12 +252,11 @@ function update_overlay(mesh) {
   $('#overlay')
       .css('left', (left - $('#overlay').width() / 2) + 'px')
       .css('top', (top - $('#overlay').height() / 2) + 'px');
-  */
 }
 
 function render() {
   renderer.clear();
-  //renderWithOffset(scene, camera, BOUNDS.width, 0, 0);
+  renderWithOffset(scene, camera, BOUNDS.width, 0, 0);
   renderer.render( scene, camera );
 }
 
