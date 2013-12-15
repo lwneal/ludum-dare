@@ -1,6 +1,6 @@
 function MissileExhaustParticles(missile) {
   var color = missile.friendly ? 0x0000FF : 0xFF0000;
-  return new FireParticleSource(missile.mesh.position, 100, color);
+  return new FireParticleSource(missile.mesh, 100, color);
 }
 
 function Missile(friendly) {
@@ -36,7 +36,7 @@ function Missile(friendly) {
     forward.multiplyScalar(scale * speed);
     this.mesh.position.add(forward);
 
-    this.particles.update(this.mesh.position);
+    this.particles.update();
     this.updateBounds();
   };
 

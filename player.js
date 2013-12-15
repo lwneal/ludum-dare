@@ -7,7 +7,7 @@ var PlayerShip = (function(){
     this.mesh.scale.set(this.r, this.r, this.r);
     scene.add(this.mesh);
 
-    this.exhaust = new FireParticleSource(this.mesh.position, 1000, 0x882233, 300);
+    this.exhaust = new FireParticleSource(this.mesh, 1000, 0x882233, 300);
 
     this.missiles_left = 1;
 
@@ -59,7 +59,7 @@ var PlayerShip = (function(){
       }
     }
 
-    this.exhaust.update(this.mesh.position);
+    this.exhaust.update();
   };
   return {
     init: init,
