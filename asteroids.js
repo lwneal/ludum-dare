@@ -1,5 +1,5 @@
-var ASTEROID_DESPAWN_DIST = 800;
-var ASTEROID_SPAWN_DIST = 800;
+var ASTEROID_DESPAWN_DIST = 400;
+var ASTEROID_SPAWN_DIST = 1000;
 
 function rand(min, max) {
   return min + (Math.random() * (max - min));
@@ -20,7 +20,7 @@ function isTooCloseToOrigin(position) {
 function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial({color: 0x606060, ambient: 0x202020}));
 
-
+  this.deatomizing = false;
   this.r = rand(8, 30);
   this.mesh.scale.set(1 * this.r, 1 *this.r, 1 * this.r);
   this.mesh.position.x = rand(BOUNDS.x, (BOUNDS.x + BOUNDS.width));
@@ -134,7 +134,6 @@ function isInFrontOfPlayer(pos) {
 
   var dot = playerDirection.dot(pos);
 
-  console.log(dot);
   return dot > 0;
 }
 
@@ -145,15 +144,15 @@ function asteroidRespawnCheck(ast, scale) {
   var distFromPlayer = posRelativeToPlayer.length();
 
   if (!isInFrontOfPlayer(posRelativeToPlayer) && distFromPlayer > ASTEROID_DESPAWN_DIST) {
-    var spawnDirection = new THREE.Vector3(rand(-1,1), rand(-1,1), rand(-1,1));
+    var spawnDirection = new THREE.Vector3(rand(-1,1), rand(-.2, .2), rand(-1,1));
     spawnDirection.normalize();
     spawnDirection.multiplyScalar(ASTEROID_SPAWN_DIST);
 
     //ast.mesh.position = new THREE.Vector3(PlayerShip.mesh.position);
     //ast.mesh.position.add(spawnDirection);
-    ast.mesh.position.x = PlayerShip.mesh.position.x + spawnDirection.x;
-    ast.mesh.position.y = PlayerShip.mesh.position.y + spawnDirection.y;
-    ast.mesh.position.z = PlayerShip.mesh.position.z + spawnDirection.z;
+    ast.mesh.position.x = TargetEnemy.mesh.position.x + spawnDirection.x;
+    ast.mesh.position.y = TargetEnemy.mesh.position.y + spawnDirection.y;
+    ast.mesh.position.z = TargetEnemy.mesh.position.z + spawnDirection.z;
   }
   
 }
@@ -237,6 +236,12 @@ var Asteroid = (function() {
       var ast = asteroids[i];
       asteroidMove(ast, scale);
       asteroidRespawnCheck(ast, scale);
+      if (rand(1,100) == 42) {
+        ast.deatomizing = true;
+      }
+      if (ast.deatomizing) {
+        ast.mesh.material.color.setHex(0xFF0000);
+      }
     }
   }
 
