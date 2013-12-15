@@ -29,12 +29,12 @@ var Stars = (function(){
 
     var stars;
     var starsMaterials = [
-      new THREE.ParticleSystemMaterial( { color: 0x555555, size: 2, sizeAttenuation: false } ),
-      new THREE.ParticleSystemMaterial( { color: 0x555555, size: 1, sizeAttenuation: false } ),
-      new THREE.ParticleSystemMaterial( { color: 0x333333, size: 2, sizeAttenuation: false } ),
-      new THREE.ParticleSystemMaterial( { color: 0x3a3a3a, size: 1, sizeAttenuation: false } ),
-      new THREE.ParticleSystemMaterial( { color: 0x1a1a1a, size: 2, sizeAttenuation: false } ),
-      new THREE.ParticleSystemMaterial( { color: 0x1a1a1a, size: 1, sizeAttenuation: false } )
+      new THREE.ParticleSystemMaterial( { color: 0x555555, size: 2, sizeAttenuation: false, fog: false } ),
+      new THREE.ParticleSystemMaterial( { color: 0x555555, size: 1, sizeAttenuation: false, fog: false } ),
+      new THREE.ParticleSystemMaterial( { color: 0x333333, size: 2, sizeAttenuation: false, fog: false } ),
+      new THREE.ParticleSystemMaterial( { color: 0x3a3a3a, size: 1, sizeAttenuation: false, fog: false } ),
+      new THREE.ParticleSystemMaterial( { color: 0x1a1a1a, size: 2, sizeAttenuation: false, fog: false } ),
+      new THREE.ParticleSystemMaterial( { color: 0x1a1a1a, size: 1, sizeAttenuation: false, fog: false } )
     ];
 
     for ( i = 10; i < 30; i ++ ) {

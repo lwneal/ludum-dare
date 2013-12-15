@@ -23,6 +23,21 @@ var quadtree = new Quadtree(BOUNDS);
 
 init();
 
+
+function spawn_enemy_missile() {
+  var em = new Missile(false);
+
+  em.mesh.position = PlayerShip.mesh.position.clone();
+
+  em.mesh.position.x += rand(200, 500);
+  em.mesh.position.z += rand(200, 500);
+  if (rand(0, 1) < 0.5) {
+    em.mesh.position.x = -em.mesh.position.x;
+  }
+
+  missiles.push(em);
+}
+
 function init() {
 
   container = document.getElementById( 'container' );
@@ -30,6 +45,7 @@ function init() {
   keyboard = new THREEx.KeyboardState();
 
   scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x000000, 0.01);
   overlay_scene = new THREE.Scene();
 
   /// STARS
@@ -87,13 +103,7 @@ function init() {
 
     TargetEnemy.init("target_ship");
 
-    var em = new Missile(false);
-    em.mesh.position.set(-800, 0, -400);
-    missiles.push(em);
-
-    em = new Missile(false);
-    em.mesh.position.set(400, 0, -600);
-    missiles.push(em);
+    spawn_enemy_missile();
 
     window.addEventListener( 'resize', onWindowResize, false );
 
@@ -167,6 +177,31 @@ function animate(timestamp) {
   TargetEnemy.update(scale);
   _.each(missiles, function(m) {
     m.update(scale);
+
+    // Update missile indicator
+    var fel = $('#missile_ind');
+    var bel = $('#missile_bind');
+    if (onscreen(m.mesh)) {
+      var coords = screen_coords(m.mesh);
+      fel.css('display', 'block');
+      bel.css('display', 'none');
+      fel.css('left', (coords.left - fel.width() / 2) + 'px')
+         .css('top', (coords.top - fel.height() / 2) + 'px');
+    }
+    else {
+      fel.css('display', 'none');
+      bel.css('display', 'block');
+      var to_m = new THREE.Vector3().subVectors(m.mesh.position, PlayerShip.mesh.position);
+      var dist = to_m.length();
+      to_m.normalize();
+      var x = ((to_m.x + 1) / 2) * window.innerWidth;
+
+      bel.css('left', (x - bel.width() / 2) + 'px');
+      var sat = 100*(dist / 600.0);
+      if (sat > 100) sat = 100;
+      if (sat < 0) sat = 0;
+      bel.css('border-top-color', 'hsl(0, ' + sat + '%, 50%)');
+    }
   });
   Stars.update(scale);
 
@@ -183,6 +218,7 @@ function animate(timestamp) {
   }
 
   // Check for missile collisions
+  var new_missiles = 0;
   _.each(missiles, function(m, ix_m) {
     var objs = collisions(m);
     _.every(objs, function(o) {
@@ -194,6 +230,8 @@ function animate(timestamp) {
         if (m.friendly) {
           window.location = "lose.html";
         }
+
+        new_missiles += 1;
 
         return false;
       }
@@ -208,13 +246,28 @@ function animate(timestamp) {
     });
   });
 
+  for (var i = 0; i < new_missiles; i++) {
+    spawn_enemy_missile();
+    var snd = new Audio("assets/explosion.wav");
+    snd.play();
+  }
+
+  (function() {
+    var objs = collisions(PlayerShip);
+    _.each(objs, function(o) {
+      if (o.type() == "asteroid") {
+        window.location = "lose.html";
+      }
+    });
+  })();
+
 
   render();
   stats.update();
 
 }
   
-function update_overlay(mesh) {
+function screen_coords(mesh) {
   var p, v, percX, percY, left, top;
 
   // this will give us position relative to the world
@@ -222,6 +275,8 @@ function update_overlay(mesh) {
 
   // projectVector will translate position to 2d
   v = new THREE.Projector().projectVector(p, camera);
+
+  if (v.z < 0) return null;
 
   // translate our vector so that percX=0 represents
   // the left edge, percX=1 is the right edge,
@@ -233,11 +288,30 @@ function update_overlay(mesh) {
   left = percX * window.innerWidth;
   top = percY * window.innerHeight;
 
-  // position the overlay so that it's center is on top of
-  // the sphere we're tracking
-  $('#overlay')
-      .css('left', (left - $('#overlay').width() / 2) + 'px')
-      .css('top', (top - $('#overlay').height() / 2) + 'px');
+  return {left: left, top: top};
+}
+
+function onscreen(mesh) {
+  var forward = new THREE.Vector3(0, 0, -1).applyQuaternion(PlayerShip.mesh.quaternion);
+  var to_enemy = new THREE.Vector3().subVectors(mesh.position, PlayerShip.mesh.position).normalize();
+  return forward.dot(to_enemy) > 0;
+}
+
+function update_enemy_overlay(mesh) {
+  if (onscreen(mesh)) {
+    var coords = screen_coords(mesh);
+    if (coords !== null) {
+      $('#overlay')
+          .css('left', (coords.left - $('#overlay').width() / 2) + 'px')
+          .css('top', (coords.top - $('#overlay').height() / 2) + 'px');
+    }
+    else {
+      $('#overlay').css('left', -200).css('top', -200);
+    }
+  }
+  else {
+    $('#overlay').css('left', -200).css('top', -200);
+  }
 }
 
 function render() {

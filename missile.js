@@ -54,7 +54,7 @@ function Missile(friendly) {
   }
 
   this.r = 10;
-  this.mesh = new THREE.Mesh(Assets.get("missile"), new THREE.MeshLambertMaterial({color: color, ambient: acolor}));
+  this.mesh = new THREE.Mesh(Assets.get("missile"), new THREE.MeshLambertMaterial({color: color, ambient: acolor, fog: false}));
   this.mesh.scale.set(this.r, this.r, this.r);
   scene.add(this.mesh);
 
