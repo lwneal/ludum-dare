@@ -32,7 +32,7 @@ var PlayerShip = (function(){
     ship_forward.applyQuaternion(this.mesh.quaternion);
     ship_forward.multiplyScalar(scale * 100.0);
 
-    //this.mesh.position.add(ship_forward);
+    this.mesh.position.add(ship_forward);
     if (keyboard.pressed('W')) {
       this.mesh.position.add(ship_forward);
     }
