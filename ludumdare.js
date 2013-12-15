@@ -14,6 +14,8 @@ var clock = new THREE.Clock();
 
 var asteroids = [];
 var missiles = [];
+var INITIAL_ENEMY_DISTANCE = 400;
+var ENEMY_SPEED = 125;
 var GRAVITATIONAL_CONSTANT = 0.1;
 var PLANE_ATTRACTION_COEFF = 40;
 var TOP = 50;
@@ -29,7 +31,7 @@ init();
 function spawn_enemy_missile() {
   var em = new Missile(false);
 
-  em.mesh.position = PlayerShip.mesh.position.clone();
+  em.mesh.position = TargetEnemy.mesh.position.clone();
 
   em.mesh.position.x += rand(200, 500);
   em.mesh.position.z += rand(200, 500);
