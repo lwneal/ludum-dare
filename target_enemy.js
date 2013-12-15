@@ -2,7 +2,7 @@ var TargetEnemy = (function(){
   var init = function(geom_name) {
     this.r = 10;
 
-    this.mesh = new THREE.Mesh(Assets.get(geom_name), new THREE.MeshLambertMaterial({color: 0xFF0000, ambient: 0x800000}));
+    this.mesh = new THREE.Mesh(Assets.get(geom_name), new THREE.MeshLambertMaterial({color: 0xFF0000, ambient: 0x800000, fog: false}));
     this.mesh.position.set(0, 0, -400);
     this.mesh.scale.set(this.r, this.r, this.r);
     scene.add(this.mesh);
@@ -56,7 +56,7 @@ var TargetEnemy = (function(){
     this.mesh.position.add(forward);
     this.updateBounds();
 
-    update_overlay(this.mesh);
+    update_enemy_overlay(this.mesh);
   };
 
   var updateBounds = function() {
