@@ -177,6 +177,7 @@ function animate(timestamp) {
   TargetEnemy.update(scale);
   _.each(missiles, function(m) {
     m.update(scale);
+    if (m.friendly) return;
 
     // Update missile indicator
     var fel = $('#missile_ind');
@@ -240,7 +241,9 @@ function animate(timestamp) {
         window.location = "win.html";
       }
       else if (o.type() == "player_ship" && !m.friendly) {
-        window.location = "lose.html";
+        if (o.enabled) {
+          window.location = "lose.html";
+        }
       }
       return true;
     });
@@ -253,6 +256,7 @@ function animate(timestamp) {
   }
 
   (function() {
+    if (!PlayerShip.enabled) return;
     var objs = collisions(PlayerShip);
     _.each(objs, function(o) {
       if (o.type() == "asteroid") {

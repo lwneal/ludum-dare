@@ -1,6 +1,7 @@
 var PlayerShip = (function(){
   var init = function() {
     this.r = 5;
+    this.enabled = true;
     this.mesh = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshLambertMaterial({color: 0x0080FF, ambient: 0x004080}));
     this.mesh.scale.set(this.r, this.r, this.r);
     scene.add(this.mesh);
@@ -48,6 +49,10 @@ var PlayerShip = (function(){
         var m = new Missile(true);
         m.mesh.applyMatrix(this.mesh.matrixWorld);
         missiles.push(m);
+
+        this.mesh.remove(camera);
+        m.mesh.add(camera);
+        this.enabled = false;
       }
     }
     
