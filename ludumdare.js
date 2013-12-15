@@ -124,14 +124,6 @@ function onWindowResize() {
 
 }
 
-function updateQuadtree() {
-  quadtree.clear();
-  for (i in asteroids) {
-    var ast = asteroids[i];
-    quadtree.insert(ast.bounds);
-  }
-}
-
 function collisions(obj, obj_bounds) {
   if (typeof obj_bounds === 'undefined') {
     obj_bounds = obj.bounds;

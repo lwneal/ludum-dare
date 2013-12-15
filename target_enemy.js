@@ -24,18 +24,11 @@ var TargetEnemy = (function(){
     forward.applyQuaternion(this.mesh.quaternion);
 
     // Avoid asteroids
-    var candidates = quadtree.retrieve({x: this.mesh.position.x - this.r * 4, y: this.mesh.position.z - this.r * 4, width: this.r * 8, height: this.r * 8});
-
     var closest_dist = Infinity;
     var closest = null;
     self = this;
-    _.each(candidates, function(astb) {
-      // Only consider asteroids close to the plane
-      if (Math.abs(astb.obj.mesh.position.y) > astb.obj.r * 2.0) {
-        return;
-      }
-
-      var diff = new THREE.Vector3().subVectors(self.mesh.position, astb.obj.mesh.position);
+    _.each(asteroids, function(astb) {
+      var diff = new THREE.Vector3().subVectors(self.mesh.position, astb.mesh.position);
       var dist = diff.lengthSq();
       if (dist < closest_dist) {
         closest_dist = dist;
