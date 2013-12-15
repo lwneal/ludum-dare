@@ -141,13 +141,12 @@ function init() {
 
     TargetEnemy.init("target_ship");
 
-    missiles.push(new Missile(true));
     var em = new Missile(false);
-    em.mesh.position.x -= 80;
+    em.mesh.position.set(-800, 0, -400);
     missiles.push(em);
 
     em = new Missile(false);
-    em.mesh.position.x += 50;
+    em.mesh.position.set(400, 0, -600);
     missiles.push(em);
 
     window.addEventListener( 'resize', onWindowResize, false );
@@ -180,14 +179,17 @@ function collisions(obj, obj_bounds) {
   }
 
   var result = [];
-  _.each(asteroids, function(oth) {
+  function check(oth) {
     var diff = new THREE.Vector3().subVectors(obj.mesh.position, oth.mesh.position);
     var dist = diff.lengthSq();
     var min_dist = obj.r + oth.r;
     if (dist <= (min_dist*min_dist)) {
       result.push(oth);
     }
-  });
+  }
+  _.each(asteroids, check);
+  check(TargetEnemy);
+  check(PlayerShip);
   return result;
 }
 
@@ -245,11 +247,23 @@ function animate(timestamp) {
   _.each(missiles, function(m, ix_m) {
     var objs = collisions(m);
     _.every(objs, function(o) {
-      console.log("collision: " + o);
       if (o.type() == "asteroid") {
         scene.remove(m.mesh);
         delete missiles[ix_m];
+
+        // If it's the player's missile, end the game
+        if (m.friendly) {
+          window.location = "lose.html";
+        }
+
         return false;
+      }
+
+      if (o.type() == "target_enemy" && m.friendly) {
+        window.location = "win.html";
+      }
+      else if (o.type() == "player_ship" && !m.friendly) {
+        window.location = "lose.html";
       }
       return true;
     });

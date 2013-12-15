@@ -5,6 +5,8 @@ var PlayerShip = (function(){
     this.mesh.scale.set(this.r, this.r, this.r);
     scene.add(this.mesh);
 
+    this.missiles_left = 1;
+
     this.bounds = {obj: this};
   };
 
@@ -39,10 +41,20 @@ var PlayerShip = (function(){
     if (keyboard.pressed('S')) {
       this.mesh.position.add(ship_forward.negate());
     }
+
+    if (keyboard.pressed('space')) {
+      if (this.missiles_left > 0) {
+        this.missiles_left -= 1;
+        var m = new Missile(true);
+        m.mesh.applyMatrix(this.mesh.matrixWorld);
+        missiles.push(m);
+      }
+    }
   };
 
   return {
     init: init,
-    update: update
+    update: update,
+    type: function() { return "player_ship" },
   };
 })();
