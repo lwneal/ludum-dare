@@ -1,3 +1,4 @@
+var NUM_PARTICLES = 1000;
 var PlayerShip = (function(){
   var init = function() {
     this.r = 5;
@@ -5,6 +6,8 @@ var PlayerShip = (function(){
     this.mesh = new THREE.Mesh(Assets.get("player_ship"), new THREE.MeshLambertMaterial({color: 0x0080FF, ambient: 0x004080}));
     this.mesh.scale.set(this.r, this.r, this.r);
     scene.add(this.mesh);
+
+    this.exhaust = new FireParticleSource(this.mesh.position, 1000, 0x882233, 300);
 
     this.missiles_left = 1;
 
@@ -55,25 +58,9 @@ var PlayerShip = (function(){
         this.enabled = false;
       }
     }
-    
-    /*
-    // Wrap around
-    if (this.mesh.position.x < BOUNDS.x) {
-      this.mesh.position.x += BOUNDS.width;
-    }
-    if (this.mesh.position.x > BOUNDS.x + BOUNDS.width) {
-      this.mesh.position.x -= BOUNDS.width;
-    }
-    if (this.mesh.position.z < BOUNDS.y) {
-      this.mesh.position.z += BOUNDS.height;
-    }
-    if (this.mesh.position.z > BOUNDS.y + BOUNDS.height) {
-      this.mesh.position.z -= BOUNDS.height;
-    }
-    */
-        
-  };
 
+    this.exhaust.update(this.mesh.position);
+  };
   return {
     init: init,
     update: update,

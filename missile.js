@@ -1,48 +1,6 @@
 function MissileExhaustParticles(missile) {
-  this.missile = missile;
-
-  this.particles = new THREE.Geometry();
-  this.lifetimes = [];
-  var mat = new THREE.ParticleSystemMaterial({
-    color: 0xFFFFFF,
-    size: 10,
-    sizeAttenuation: false,
-    fog: false
-  });
-  mat = new THREE.MeshBasicMaterial();
-
-  for (var i = 0; i < 100; i++) {
-    this.particles.vertices.push(new THREE.Vector3(this.missile.mesh.position));
-    this.lifetimes.push(i);
-  }
-  this.particles.verticesNeedUpdate = true;
-
-  this.system = new THREE.ParticleSystem(this.particles, mat);
-  this.system.dynamic = true;
-  scene.add(this.system);
-  console.log("Added system");
-  console.log(this.system.position);
-
-
-  this.spawnPosition = function() {
-    return this.missile.mesh.position;
-  };
-
-  this.update = function(scale) {
-    var backward = new THREE.Vector3(0, 0, 1).applyQuaternion(this.missile.mesh.quaternion);
-    backward.multiplyScalar(scale);
-
-    self = this;
-    _.each(this.particles.vertices, function(p, ix) {
-      //p.add(backward);
-      self.lifetimes[ix] += 1;
-      if (self.lifetimes[ix] >= 100) {
-        self.lifetimes[ix] = 0;
-        p.set(self.spawnPosition());
-      }
-    });
-    this.particles.verticesNeedUpdate = true;
-  };
+  var color = missile.friendly ? 0x0000FF : 0xFF0000;
+  return new FireParticleSource(missile.mesh.position, 100, color);
 }
 
 function Missile(friendly) {
@@ -78,7 +36,7 @@ function Missile(friendly) {
     forward.multiplyScalar(scale * speed);
     this.mesh.position.add(forward);
 
-    this.particles.update(scale);
+    this.particles.update(this.mesh.position);
     this.updateBounds();
   };
 
