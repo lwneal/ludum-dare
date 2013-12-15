@@ -14,6 +14,8 @@ var clock = new THREE.Clock();
 
 var asteroids = [];
 var missiles = [];
+var INITIAL_ENEMY_DISTANCE = 1000;
+var ENEMY_SPEED = 95;
 var GRAVITATIONAL_CONSTANT = 0.1;
 var PLANE_ATTRACTION_COEFF = 40;
 var TOP = 75;
