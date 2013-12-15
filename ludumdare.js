@@ -16,8 +16,8 @@ var asteroids = [];
 var missiles = [];
 var GRAVITATIONAL_CONSTANT = 0.1;
 var PLANE_ATTRACTION_COEFF = 40;
-var TOP = 100;
-var BOTTOM = -100;
+var TOP = 50;
+var BOTTOM = -50;
 var BOUNDS = {x: -1000, y: -1000, width: 2000, height: 2000};
 var quadtree = new Quadtree(BOUNDS);
 

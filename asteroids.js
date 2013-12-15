@@ -1,4 +1,5 @@
-var ASTEROID_DESPAWN_DIST = 1000;
+var ASTEROID_COUNT = 200;
+var ASTEROID_DESPAWN_DIST = 300;
 var ASTEROID_SPAWN_DIST = 1000;
 var axx = new THREE.Vector3(1, 0, 0);
 var axy = new THREE.Vector3(0, 1, 0);
@@ -25,7 +26,7 @@ function Asteroid() {
   this.type = function() { return "asteroid"; };
   this.bounds = {obj: this};
   this.respawn = function() {
-    var spawnDirection = new THREE.Vector3(rand(-1,1), rand(-.7, .7), rand(-1,1));
+    var spawnDirection = new THREE.Vector3(rand(-1,1), 0, rand(-1,1));
     spawnDirection.normalize();
     spawnDirection.multiplyScalar(ASTEROID_SPAWN_DIST);
 
@@ -46,10 +47,20 @@ function Asteroid() {
     }
   };
 
+  var toPlayer = new THREE.Vector3();
+  var playerFacing = new THREE.Vector3();
+  this.isBehindPlayer = function() {
+    toPlayer.subVectors(this.mesh.position, PlayerShip.mesh.position);
+    playerFacing.copy(axz);
+    playerFacing.applyQuaternion(PlayerShip.mesh.quaternion);
+    
+    return playerFacing.dot(toPlayer) > 0;
+  };
+
   this.update = function(scale) {
     // Respawn if out of view
     var distFromPlayer = this.mesh.position.distanceTo(PlayerShip.mesh.position);
-    if (distFromPlayer > ASTEROID_DESPAWN_DIST) {
+    if (this.isBehindPlayer() && distFromPlayer > ASTEROID_DESPAWN_DIST) {
       this.respawn();
     }
 
@@ -133,14 +144,14 @@ function asteroidInteract(ast, bst, scale) {
   ast.v.z += (dz / distSq) * bstMass * GRAVITATIONAL_CONSTANT * scale;
 
   // Colliding asteroids bounce
-  if (ast.mesh.position.distanceToSquared(bst.mesh.position) / 2 < ast.r*ast.r + bst.r*bst.r) {
+  if (ast.mesh.position.distanceToSquared(bst.mesh.position) < ast.r*ast.r + bst.r*bst.r) {
     asteroidCollide(ast, bst);
   }
 }
 
 var AsteroidField = (function() {
   var init = function(geom_name) {
-    for (var i = 0; i < 400; i++) {
+    for (var i = 0; i < ASTEROID_COUNT; i++) {
       asteroids.push(new Asteroid());
     }
   };
