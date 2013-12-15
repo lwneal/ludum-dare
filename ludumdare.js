@@ -213,20 +213,6 @@ function animate(timestamp) {
   stats.update();
 
 }
-function renderWithOffset(scene, camera, x, y, z) {
-  var translateMat = new THREE.Matrix4();
-  translateMat.makeTranslation(x,y,z);
-
-  var currentMat = new THREE.Matrix4();
-  currentMat.copy(camera.matrixWorld);
-  translateMat.multiply(camera.matrixWorld);
-
-  var newCam = camera.clone();
-  newCam.matrixAutoUpdate = false;
-
-  newCam.matrix = translateMat;
-  renderer.render(scene, newCam);
-}
   
 function update_overlay(mesh) {
   var p, v, percX, percY, left, top;
@@ -256,7 +242,6 @@ function update_overlay(mesh) {
 
 function render() {
   renderer.clear();
-  renderWithOffset(scene, camera, BOUNDS.width, 0, 0);
   renderer.render( scene, camera );
 }
 

@@ -9,6 +9,12 @@ function vecDistanceSq(a, b) {
   return dx*dx + dy*dy + dz*dz;
 }
 
+function isTooCloseToOrigin(position) {
+  return -100 < position.x && position.x < 100
+    && -100 < position.z && position.z < 100;
+
+}
+
 function asteroid() {
   this.mesh = new THREE.Mesh(Assets.get("ast1"), new THREE.MeshLambertMaterial({color: 0x606060, ambient: 0x202020}));
 
@@ -18,6 +24,10 @@ function asteroid() {
   this.mesh.position.x = rand(BOUNDS.x, (BOUNDS.x + BOUNDS.width));
   this.mesh.position.y = rand(BOTTOM, TOP);
   this.mesh.position.z = rand(BOUNDS.y, (BOUNDS.y + BOUNDS.height));
+
+  if (isTooCloseToOrigin(this.mesh.position)) {
+    this.mesh.position.x += BOUNDS.x / 2;
+  }
 
   var pos = new THREE.Vector3(this.mesh.position);
   pos.normalize();
@@ -114,6 +124,10 @@ function asteroidMove(ast, scale) {
   ast.updateBounds();
 }
 
+function asteroidRespawnCheck(ast, scale) {
+  
+}
+
 function asteroidCollide(ast, bst) {
   var astmass = ast.r*ast.r;
   var bstmass = bst.r*bst.r;
@@ -191,8 +205,8 @@ var Asteroid = (function() {
 
     for (var i = 0; i < asteroids.length; i++) {
       var ast = asteroids[i];
-      //gravitate(ast, gravity);
       asteroidMove(ast, scale);
+      asteroidRespawnCheck(ast, scale);
     }
   }
 
