@@ -8,9 +8,7 @@ var loader = new THREE.JSONLoader();
 var container, stats, keyboard;
 
 var camera, controls, scene, renderer;
-
-var mesh;
-var player_ship_mesh;
+var overlay_scene, overlay_camera;
 
 var clock = new THREE.Clock();
 
@@ -32,6 +30,7 @@ function init() {
   keyboard = new THREEx.KeyboardState();
 
   scene = new THREE.Scene();
+  overlay_scene = new THREE.Scene();
 
   /// STARS
   Stars.init();
@@ -44,13 +43,21 @@ function init() {
   var ambientLight = new THREE.AmbientLight( 0xAAAAAA );
   scene.add( ambientLight );
 
+  overlay_scene.add(new THREE.AmbientLight(0xFFFFFF));
+
   var directionalLight = new THREE.DirectionalLight( 0x555555, 2 );
   directionalLight.position.set( 1, 1, 0.5 ).normalize();
   scene.add( directionalLight );
 
+<<<<<<< HEAD
   renderer = new THREE.WebGLRenderer( { alpha: true } );
   renderer.autoClear = false;
   renderer.setClearColor(BLACK, 1.0 );
+=======
+  renderer = new THREE.WebGLRenderer( { alpha: false } );
+  renderer.autoClear = false;
+  renderer.setClearColor( BLACK, 1 );
+>>>>>>> a2a674741736a16601a62eac4a4d15d781aed3dd
   renderer.setSize( window.innerWidth, window.innerHeight );
 
   container.innerHTML = "";
@@ -76,17 +83,19 @@ function init() {
 
     PlayerShip.init();
 
-    camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 2000000 );
+    camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
     camera.position.z = 10;
     camera.position.y = 10;
     camera.lookAt(new THREE.Vector3(0, 0, -5));
     PlayerShip.mesh.add(camera);
 
+    overlay_camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
+
     TargetEnemy.init("target_ship");
 
     missiles.push(new Missile(true));
     var em = new Missile(false);
-    em.mesh.position.x -= 50;
+    em.mesh.position.x -= 80;
     missiles.push(em);
 
     em = new Missile(false);
@@ -123,18 +132,28 @@ function collisions(obj, obj_bounds) {
   }
 
   var result = [];
-  var others = quadtree.retrieve(obj_bounds);
-  for (j in others) {
-    var oth_bounds = others[j];
-    var oth = oth_bounds.obj;
-
+  _.each(asteroids, function(oth) {
     var diff = new THREE.Vector3().subVectors(obj.mesh.position, oth.mesh.position);
     var dist = diff.lengthSq();
-    if (dist <= (obj.r*obj.r) + (oth.r*oth.r)) {
+    var min_dist = obj.r + oth.r;
+    if (dist <= (min_dist*min_dist)) {
       result.push(oth);
     }
-  }
+  });
   return result;
+}
+
+function turn_towards(msrc, mtgt) {
+  var forward = new THREE.Vector3(0, 0, -1).applyQuaternion(msrc.quaternion);
+  var right = new THREE.Vector3(1, 0, 0).applyQuaternion(msrc.quaternion);
+  var to_target = new THREE.Vector3().subVectors(mtgt.position, msrc.position).normalize();
+
+  var fdot = forward.dot(to_target);
+  var turn = (fdot > 0) ? (1 - fdot) : 1;
+  var dir = right.dot(to_target);
+  if (dir > 0) turn = -turn;
+  
+  return turn;
 }
 
 // RENDER LOOP
@@ -146,7 +165,6 @@ function animate(timestamp) {
   if (last_time === null) last_time = timestamp;
   var scale = (timestamp - last_time) / 1000.0;
   last_time = timestamp;
-
 
   PlayerShip.update(scale);
   Asteroid.update(scale);
@@ -168,24 +186,64 @@ function animate(timestamp) {
     }
   }
 
+  // Check for missile collisions
+  _.each(missiles, function(m, ix_m) {
+    var objs = collisions(m);
+    _.every(objs, function(o) {
+      console.log("collision: " + o);
+      if (o.type() == "asteroid") {
+        scene.remove(m.mesh);
+        delete missiles[ix_m];
+        return false;
+      }
+      return true;
+    });
+  });
+
+
   render();
   stats.update();
 
 }
 function renderWithOffset(scene, camera, x, y, z) {
 
-  var m = new THREE.Matrix4(PlayerShip.mesh.matrixWorld);
   var t = new THREE.Matrix4();
   t.makeTranslation(x,y,z);
 
-  
+  var m = new THREE.Matrix4(PlayerShip.mesh.matrixWorld);
 
+  var camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
   camera.position.x += x;
   camera.position.y += y;
   camera.position.z += z;
-  //PlayerShip.mesh.add(camera);
-
+  // camera.setWorldMatrix or something
   renderer.render(scene, camera);
+}
+  
+function update_overlay(mesh) {
+  var p, v, percX, percY, left, top;
+
+  // this will give us position relative to the world
+  p = new THREE.Vector3().setFromMatrixPosition(mesh.matrixWorld);
+
+  // projectVector will translate position to 2d
+  v = new THREE.Projector().projectVector(p, camera);
+
+  // translate our vector so that percX=0 represents
+  // the left edge, percX=1 is the right edge,
+  // percY=0 is the top edge, and percY=1 is the bottom edge.
+  percX = (v.x + 1) / 2;
+  percY = (-v.y + 1) / 2;
+
+  // scale these values to our viewport size
+  left = percX * window.innerWidth;
+  top = percY * window.innerHeight;
+
+  // position the overlay so that it's center is on top of
+  // the sphere we're tracking
+  $('#overlay')
+      .css('left', (left - $('#overlay').width() / 2) + 'px')
+      .css('top', (top - $('#overlay').height() / 2) + 'px');
 }
 
 function render() {

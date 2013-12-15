@@ -7,6 +7,14 @@ var TargetEnemy = (function(){
     this.mesh.scale.set(this.r, this.r, this.r);
     scene.add(this.mesh);
 
+    /*this.indicatorMesh = new THREE.Mesh(new THREE.CubeGeometry(this.r*2, this.r*2, this.r*2),
+      new THREE.MeshBasicMaterial({
+        color: 0xFF0000,
+        wireframe: true,
+        depthTest: false
+        }));
+    overlay_scene.add(this.indicatorMesh);*/
+
     this.desired_turn = 0.0;
     this.bounds = {obj: this};
   }
@@ -36,23 +44,19 @@ var TargetEnemy = (function(){
     });
 
     if (closest !== null) {
-      var closest_diff = new THREE.Vector3().subVectors(closest.obj.mesh.position, this.mesh.position).normalize();
-      var dot = forward.dot(closest_diff);
-      if (dot > 0) {
-        var angle = Math.acos(forward.dot(closest_diff));
-        if (angle == angle) {
-          this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), 2.0 * angle * scale);
-        }
-      }
+      var turn = turn_towards(this.mesh, closest.mesh);
+      this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), -2.0 * turn * scale);
     }
     else {
-      this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.sin(this.desired_turn) * scale);
+      //this.mesh.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.sin(this.desired_turn) * scale);
       this.desired_turn += scale / 4.0;
     }
 
     forward.multiplyScalar(scale * 50.0);
     this.mesh.position.add(forward);
     this.updateBounds();
+
+    update_overlay(this.mesh);
   };
 
   var updateBounds = function() {
