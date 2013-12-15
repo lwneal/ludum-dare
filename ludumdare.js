@@ -30,6 +30,7 @@ function init() {
   keyboard = new THREEx.KeyboardState();
 
   scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x000000, 0.01);
   overlay_scene = new THREE.Scene();
 
   /// STARS
