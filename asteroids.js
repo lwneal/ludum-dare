@@ -1,3 +1,6 @@
+var ASTEROID_DESPAWN_DIST = 800;
+var ASTEROID_SPAWN_DIST = 800;
+
 function rand(min, max) {
   return min + (Math.random() * (max - min));
 };
@@ -12,7 +15,6 @@ function vecDistanceSq(a, b) {
 function isTooCloseToOrigin(position) {
   return -100 < position.x && position.x < 100
     && -100 < position.z && position.z < 100;
-
 }
 
 function asteroid() {
@@ -101,6 +103,7 @@ function asteroidMove(ast, scale) {
   ast.mesh.rotateOnAxis(axy, ast.rvy * scale);
   ast.mesh.rotateOnAxis(axz, ast.rvz * scale);
 
+  /*
   // Wrap around
   if (ast.mesh.position.x < BOUNDS.x) {
     ast.mesh.position.x += BOUNDS.width;
@@ -120,11 +123,38 @@ function asteroidMove(ast, scale) {
   if (ast.mesh.position.y > TOP && ast.vy > 0) {
     ast.vy *= -1;
   }
+  */
 
   ast.updateBounds();
 }
 
+function isInFrontOfPlayer(pos) {
+  var playerDirection = new THREE.Vector3( 0, 0, -1 );
+  playerDirection.applyQuaternion( PlayerShip.mesh.quaternion );
+
+  var dot = playerDirection.dot(pos);
+
+  console.log(dot);
+  return dot > 0;
+}
+
 function asteroidRespawnCheck(ast, scale) {
+  var posRelativeToPlayer = new THREE.Vector3();
+  posRelativeToPlayer.subVectors(ast.mesh.position, PlayerShip.mesh.position);
+
+  var distFromPlayer = posRelativeToPlayer.length();
+
+  if (!isInFrontOfPlayer(posRelativeToPlayer) && distFromPlayer > ASTEROID_DESPAWN_DIST) {
+    var spawnDirection = new THREE.Vector3(rand(-1,1), rand(-1,1), rand(-1,1));
+    spawnDirection.normalize();
+    spawnDirection.multiplyScalar(ASTEROID_SPAWN_DIST);
+
+    //ast.mesh.position = new THREE.Vector3(PlayerShip.mesh.position);
+    //ast.mesh.position.add(spawnDirection);
+    ast.mesh.position.x = PlayerShip.mesh.position.x + spawnDirection.x;
+    ast.mesh.position.y = PlayerShip.mesh.position.y + spawnDirection.y;
+    ast.mesh.position.z = PlayerShip.mesh.position.z + spawnDirection.z;
+  }
   
 }
 

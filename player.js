@@ -51,6 +51,7 @@ var PlayerShip = (function(){
       }
     }
     
+    /*
     // Wrap around
     if (this.mesh.position.x < BOUNDS.x) {
       this.mesh.position.x += BOUNDS.width;
@@ -64,6 +65,7 @@ var PlayerShip = (function(){
     if (this.mesh.position.z > BOUNDS.y + BOUNDS.height) {
       this.mesh.position.z -= BOUNDS.height;
     }
+    */
         
   };
 
