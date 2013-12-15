@@ -5,6 +5,8 @@ var PlayerShip = (function(){
     this.mesh.scale.set(this.r, this.r, this.r);
     scene.add(this.mesh);
 
+    this.missiles_left = 1;
+
     this.bounds = {obj: this};
   };
 
@@ -32,7 +34,7 @@ var PlayerShip = (function(){
     ship_forward.applyQuaternion(this.mesh.quaternion);
     ship_forward.multiplyScalar(scale * 100.0);
 
-    //this.mesh.position.add(ship_forward);
+    this.mesh.position.add(ship_forward);
     if (keyboard.pressed('W')) {
       this.mesh.position.add(ship_forward);
     }
@@ -40,6 +42,15 @@ var PlayerShip = (function(){
       this.mesh.position.add(ship_forward.negate());
     }
 
+    if (keyboard.pressed('space')) {
+      if (this.missiles_left > 0) {
+        this.missiles_left -= 1;
+        var m = new Missile(true);
+        m.mesh.applyMatrix(this.mesh.matrixWorld);
+        missiles.push(m);
+      }
+    }
+    
     // Wrap around
     if (this.mesh.position.x < BOUNDS.x) {
       this.mesh.position.x += BOUNDS.width;
@@ -58,6 +69,7 @@ var PlayerShip = (function(){
 
   return {
     init: init,
-    update: update
+    update: update,
+    type: function() { return "player_ship" },
   };
 })();

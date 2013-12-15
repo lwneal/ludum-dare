@@ -69,6 +69,7 @@ function Missile(friendly) {
 
     var forward = new THREE.Vector3(0, 0, -1).applyQuaternion(this.mesh.quaternion);
     var speed = (1.0 - Math.abs(turn)) * 110.0;
+    if (this.friendly) speed *= 1.5;
     forward.multiplyScalar(scale * speed);
     this.mesh.position.add(forward);
 
