@@ -33,61 +33,7 @@ function init() {
   overlay_scene = new THREE.Scene();
 
   /// STARS
-
-  var radius = 100;
-  var i, r = radius, starsGeometry = [ new THREE.Geometry(), new THREE.Geometry() ];
-
-  for ( i = 0; i < 250; i ++ ) {
-
-    var vertex = new THREE.Vector3();
-    vertex.x = Math.random() * 2 - 1;
-    vertex.y = Math.random() * 2 - 1;
-    vertex.z = Math.random() * 2 - 1;
-    vertex.multiplyScalar( r );
-
-    starsGeometry[ 0 ].vertices.push( vertex );
-
-  }
-
-  for ( i = 0; i < 1500; i ++ ) {
-
-    var vertex = new THREE.Vector3();
-    vertex.x = Math.random() * 2 - 1;
-    vertex.y = Math.random() * 2 - 1;
-    vertex.z = Math.random() * 2 - 1;
-    vertex.multiplyScalar( r );
-
-    starsGeometry[ 1 ].vertices.push( vertex );
-
-  }
-
-  var stars;
-  var starsMaterials = [
-    new THREE.ParticleSystemMaterial( { color: 0x555555, size: 2, sizeAttenuation: false } ),
-    new THREE.ParticleSystemMaterial( { color: 0x555555, size: 1, sizeAttenuation: false } ),
-    new THREE.ParticleSystemMaterial( { color: 0x333333, size: 2, sizeAttenuation: false } ),
-    new THREE.ParticleSystemMaterial( { color: 0x3a3a3a, size: 1, sizeAttenuation: false } ),
-    new THREE.ParticleSystemMaterial( { color: 0x1a1a1a, size: 2, sizeAttenuation: false } ),
-    new THREE.ParticleSystemMaterial( { color: 0x1a1a1a, size: 1, sizeAttenuation: false } )
-  ];
-
-  for ( i = 10; i < 30; i ++ ) {
-
-    stars = new THREE.ParticleSystem( starsGeometry[ i % 2 ], starsMaterials[ i % 6 ] );
-
-    stars.rotation.x = Math.random() * 6;
-    stars.rotation.y = Math.random() * 6;
-    stars.rotation.z = Math.random() * 6;
-
-    s = i * 10;
-    stars.scale.set( s, s, s );
-
-    stars.matrixAutoUpdate = false;
-    stars.updateMatrix();
-
-    scene.add( stars );
-
-  }
+  Stars.init();
 
   // LIGHTING
 
@@ -103,9 +49,9 @@ function init() {
   directionalLight.position.set( 1, 1, 0.5 ).normalize();
   scene.add( directionalLight );
 
-  renderer = new THREE.WebGLRenderer( { alpha: false } );
+  renderer = new THREE.WebGLRenderer( { alpha: true } );
   renderer.autoClear = false;
-  renderer.setClearColor( BLACK, 1 );
+  renderer.setClearColor(BLACK, 1.0 );
   renderer.setSize( window.innerWidth, window.innerHeight );
 
   container.innerHTML = "";
@@ -222,6 +168,7 @@ function animate(timestamp) {
   _.each(missiles, function(m) {
     m.update(scale);
   });
+  Stars.update(scale);
 
   //updateQuadtree();
 
@@ -233,14 +180,6 @@ function animate(timestamp) {
     for (var j = i + 1; j < asteroids.length; j++) {
       asteroidInteract(ast, asteroids[j], scale);
     }
-    /*
-    for (j in others) {
-      var other_bounds = others[j];
-      var other_ast = other_bounds.obj;
-      if (other_ast == ast) continue;
-
-    }
-    */
   }
 
   // Check for missile collisions
@@ -274,7 +213,21 @@ function animate(timestamp) {
   stats.update();
 
 }
+function renderWithOffset(scene, camera, x, y, z) {
 
+  var t = new THREE.Matrix4();
+  t.makeTranslation(x,y,z);
+
+  var m = new THREE.Matrix4(PlayerShip.mesh.matrixWorld);
+
+  var camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
+  camera.position.x += x;
+  camera.position.y += y;
+  camera.position.z += z;
+  // camera.setWorldMatrix or something
+  renderer.render(scene, camera);
+}
+  
 function update_overlay(mesh) {
   var p, v, percX, percY, left, top;
 
@@ -302,11 +255,8 @@ function update_overlay(mesh) {
 }
 
 function render() {
-
   renderer.clear();
+  renderWithOffset(scene, camera, 0, 1000, 0);
   renderer.render( scene, camera );
-  //renderer.clear(false, true, false);
-  //renderer.render( overlay_scene, camera );
-
 }
 

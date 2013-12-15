@@ -50,6 +50,21 @@ var PlayerShip = (function(){
         missiles.push(m);
       }
     }
+    
+    // Wrap around
+    if (this.mesh.position.x < BOUNDS.x) {
+      this.mesh.position.x += BOUNDS.width;
+    }
+    if (this.mesh.position.x > BOUNDS.x + BOUNDS.width) {
+      this.mesh.position.x -= BOUNDS.width;
+    }
+    if (this.mesh.position.z < BOUNDS.y) {
+      this.mesh.position.z += BOUNDS.height;
+    }
+    if (this.mesh.position.z > BOUNDS.y + BOUNDS.height) {
+      this.mesh.position.z -= BOUNDS.height;
+    }
+        
   };
 
   return {
