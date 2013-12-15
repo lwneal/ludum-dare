@@ -1,11 +1,12 @@
 /*
- * source: a THREE.Vector3 such as PlayerShip.mesh.position
+ * source: a mesh with a .position that is a THREE.Vector3
  * density: number of particles 
  * color: 0xFF0000 for red
  * lifetime: in seconds, average lifetime
  */
 var FireParticleSource = function(source, density, color) {
   this.source = source;
+  this.sourceLastPosition = new THREE.Vector3(source.position);
   this.density= density;
   this.color = color;
   // TODO: Calculate a death rate for a given target average lifespan
@@ -34,16 +35,23 @@ var FireParticleSource = function(source, density, color) {
   this.bounds = {obj: this};
   this.type = function() { return "particle_system"; };
 
-  this.update = function(source) {
-    var jitter = 0.6;
+  this.jitter = 0.6;
+  this.movement = new THREE.Vector3();
+  this.update = function() {
+
     for (var i = 0; i < this.density; i++) {
       var pos = this.geometry.vertices[i];
       if (Math.random() < this.deathrate) {
-        pos.copy(source);
+        this.movement.subVectors(this.source.position, this.sourceLastPosition);
+        pos.copy(this.source.position);
+        pos.sub(this.movement);
+        this.movement.multiplyScalar(Math.random());
+        pos.sub(this.movement);
       }
-      pos.x += rand(-jitter, jitter);
-      pos.y += rand(-jitter, jitter);
-      pos.z += rand(-jitter, jitter);
+      pos.x += rand(-this.jitter, this.jitter);
+      pos.y += rand(-this.jitter, this.jitter);
+      pos.z += rand(-this.jitter, this.jitter);
     }
+    this.sourceLastPosition.copy(this.source.position);
   };
 };

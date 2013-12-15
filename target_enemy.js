@@ -3,7 +3,7 @@ var TargetEnemy = (function(){
     this.r = 10;
 
     this.mesh = new THREE.Mesh(Assets.get(geom_name), new THREE.MeshLambertMaterial({color: 0xFF0000, ambient: 0x800000, fog: false}));
-    this.mesh.position.set(1200, 0, -1200);
+    this.mesh.position.set(800, 0, -800);
     this.mesh.scale.set(this.r, this.r, this.r);
     scene.add(this.mesh);
 
@@ -52,7 +52,7 @@ var TargetEnemy = (function(){
       this.desired_turn += scale / 4.0;
     }
 
-    forward.multiplyScalar(scale * 105.0);
+    forward.multiplyScalar(scale * 95.0);
     this.mesh.position.add(forward);
     this.updateBounds();
 
