@@ -21,6 +21,8 @@ var BOTTOM = -100;
 var BOUNDS = {x: -1000, y: -1000, width: 2000, height: 2000};
 var quadtree = new Quadtree(BOUNDS);
 
+var NO_LOSE = false;
+
 init();
 
 
@@ -104,6 +106,8 @@ function init() {
     TargetEnemy.init("target_ship");
 
     spawn_enemy_missile();
+
+    //missiles.push(new Missile(true));
 
     window.addEventListener( 'resize', onWindowResize, false );
 
@@ -228,7 +232,7 @@ function animate(timestamp) {
         delete missiles[ix_m];
 
         // If it's the player's missile, end the game
-        if (m.friendly) {
+        if (m.friendly && !NO_LOSE) {
           window.location = "lose.html";
         }
 
@@ -241,7 +245,7 @@ function animate(timestamp) {
         window.location = "win.html";
       }
       else if (o.type() == "player_ship" && !m.friendly) {
-        if (o.enabled) {
+        if (o.enabled && !NO_LOSE) {
           window.location = "lose.html";
         }
       }
@@ -259,7 +263,7 @@ function animate(timestamp) {
     if (!PlayerShip.enabled) return;
     var objs = collisions(PlayerShip);
     _.each(objs, function(o) {
-      if (o.type() == "asteroid") {
+      if (o.type() == "asteroid" && !NO_LOSE) {
         window.location = "lose.html";
       }
     });

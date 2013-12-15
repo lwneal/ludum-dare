@@ -5,16 +5,20 @@ function MissileExhaustParticles(missile) {
   this.lifetimes = [];
   var mat = new THREE.ParticleSystemMaterial({
     color: 0xFFFFFF,
-    size: 50,
-    sizeAttenuation: false
+    size: 10,
+    sizeAttenuation: false,
+    fog: false
   });
+  mat = new THREE.MeshBasicMaterial();
 
   for (var i = 0; i < 100; i++) {
     this.particles.vertices.push(new THREE.Vector3(this.missile.mesh.position));
     this.lifetimes.push(i);
   }
+  this.particles.verticesNeedUpdate = true;
 
   this.system = new THREE.ParticleSystem(this.particles, mat);
+  this.system.dynamic = true;
   scene.add(this.system);
   console.log("Added system");
   console.log(this.system.position);
@@ -25,18 +29,19 @@ function MissileExhaustParticles(missile) {
   };
 
   this.update = function(scale) {
-    /*var backward = new THREE.Vector3(0, 0, 1).applyQuaternion(this.missile.mesh.quaternion);
+    var backward = new THREE.Vector3(0, 0, 1).applyQuaternion(this.missile.mesh.quaternion);
     backward.multiplyScalar(scale);
 
     self = this;
     _.each(this.particles.vertices, function(p, ix) {
-      p.add(backward);
+      //p.add(backward);
       self.lifetimes[ix] += 1;
       if (self.lifetimes[ix] >= 100) {
         self.lifetimes[ix] = 0;
         p.set(self.spawnPosition());
       }
-    });*/
+    });
+    this.particles.verticesNeedUpdate = true;
   };
 }
 
@@ -59,7 +64,7 @@ function Missile(friendly) {
   scene.add(this.mesh);
 
   this.bounds = {obj: this};
-  //this.particles = new MissileExhaustParticles(this);
+  this.particles = new MissileExhaustParticles(this);
 
   this.update = function(scale) {
     var target = (this.friendly) ? TargetEnemy : PlayerShip;
@@ -73,7 +78,7 @@ function Missile(friendly) {
     forward.multiplyScalar(scale * speed);
     this.mesh.position.add(forward);
 
-    //this.particles.update(scale);
+    this.particles.update(scale);
     this.updateBounds();
   };
 

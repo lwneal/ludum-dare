@@ -72,7 +72,7 @@ function asteroid() {
 
     this.planeMesh.position.set(this.mesh.position.x, 0, this.mesh.position.z);
     if (Math.abs(this.mesh.position.y) < this.r) {
-      this.planeMesh.material.color.setHex(0x600000);
+      this.planeMesh.material.color.setHex(0x900000);
     }
     else {
       this.planeMesh.material.color.setHex(0x111111);
