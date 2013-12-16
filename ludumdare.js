@@ -27,6 +27,7 @@ var BOUNDS = {x: -1000, y: -1000, width: 2000, height: 2000};
 var EARTH_DISTANCE = -4500;
 
 var NO_LOSE = false;
+var startTime;
 
 init();
 
@@ -131,6 +132,7 @@ function init() {
 
     window.addEventListener( 'resize', onWindowResize, false );
 
+    startTime = new Date().getTime();
     requestAnimationFrame(animate);
   };
 
@@ -181,9 +183,16 @@ function turn_towards(msrc, mtgt) {
 // RENDER LOOP
 var last_time = null;
 function animate(timestamp) {
-
   requestAnimationFrame( animate );
 
+  // Update 'seconds remaining'
+  var ms_remaining = 1000 * 60 + startTime - new Date().getTime();
+  $('#seconds').text(ms_remaining/1000);
+  if (ms_remaining < 0 && !NO_LOSE) {
+    window.location = "lose.html";
+  }
+
+  // Move earth so you don't hit it
   meshPlanet.rotation.y += 0.001;
   meshPlanet.position.z = PlayerShip.mesh.position.z + EARTH_DISTANCE;
   meshPlanet.position.y = PlayerShip.mesh.position.y + EARTH_DISTANCE/2;

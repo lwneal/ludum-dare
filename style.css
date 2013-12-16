@@ -1,23 +1,49 @@
-      body {
-        background: black;
-        color: white;
-        font-family: monospace;
-        padding: 50px;
-      }
+.bigred {
+  font-size: 48px;
+  color: red;
+}
 
-      h1 {
-        text-align: center;
-        margin-top: 300px;
-      }
+.controls {
+  font-size: 24px;
+  font-weight: bold;
+}
 
-      p {
-        text-align: center;
-      }
+@keyframes blink {  
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-webkit-keyframes blink {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.blink {
+  -webkit-animation: blink 0.5s linear infinite;
+  -moz-animation: blink 0.5s linear infinite;
+  animation: blink 0.5s linear infinite;
+} 
 
 
-      a {
-        color: #0080FF;
-      }
-      a:visited {
-        color: #FF00FF;
-      }
+body {
+  background: black;
+  color: white;
+  font-family: monospace;
+  padding: 50px;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 200px;
+}
+
+p {
+  text-align: center;
+  font-size: large;
+}
+
+
+a {
+  color: #0080FF;
+}
+a:visited {
+  color: #FF00FF;
+}

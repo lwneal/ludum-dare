@@ -50,6 +50,14 @@
         bottom: 5px;
         left: 5px;
       }
+      #mid_text {
+        color: #7799BB;
+        font-family: Monospace;
+        position: absolute;
+        font-size: 24px;
+        bottom: 5px;
+        left: 40%;
+      }
       #right_text {
         color: #FF7777;
         font-family: Monospace;
@@ -77,7 +85,8 @@
 
     <div id="overlay">&nbsp;</div>
     <div id="left_text">Shields: <span class="blink">1%</span></div>
-    <div id="right_text">Ammunition: 1</div>
+    <div id="mid_text">Seconds Until Impact: <span id="seconds" class="blink">60</span></div>
+    <div id="right_text">Ammunition: <span id="ammo">1</span></div>
     <div id="indicators">
     <div class="missile_ind" id="missile_ind_0">&nbsp;</div>
     <div class="missile_bind" id="missile_bind_0">&nbsp;</div>
