@@ -9,24 +9,6 @@ function rand(min, max) {
   return min + (Math.random() * (max - min));
 };
 
-function vecDistanceSq(a, b) {
-  var dx = a.x - b.x;
-  var dy = a.y - b.y;
-  var dz = a.z - b.z;
-  return dx*dx + dy*dy + dz*dz;
-}
-
-function isTooCloseToOrigin(position) {
-  var DIST = 100;
-  return -DIST < position.x && position.x < DIST
-    && -DIST < position.z && position.z < DIST;
-}
-
-function signOf(x) {
-  if (x > 0) return 1;
-  return -1;
-}
-
 function Asteroid() {
   this.r = rand(8, 30);
   this.type = function() { return "asteroid"; };
