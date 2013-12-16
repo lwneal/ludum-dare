@@ -62,7 +62,7 @@ var PlayerShip = (function(){
         this.mesh.remove(camera);
         m.mesh.add(camera);
         this.enabled = false;
-        $('#ammo').text('asdf');
+        $('#ammo').text(this.missiles_left);
       }
     }
 
