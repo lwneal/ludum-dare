@@ -21,7 +21,7 @@ function Asteroid() {
     this.mesh.position.copy(PlayerShip.mesh.position);
     this.mesh.position.add(spawnDirection);
 
-    this.v = randVect(0, 50);
+    this.v = randVect(0, 60);
     this.rv = randVect(0, 1);
   };
 
