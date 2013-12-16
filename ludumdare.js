@@ -16,8 +16,8 @@ var asteroids = [];
 var missiles = [];
 var INITIAL_ENEMY_DISTANCE = 1000;
 var ENEMY_SPEED = 115;
-// he only gets one too
 var NUM_ENEMY_MISSILES = 3;
+var MISSILE_TURN_RATE = 200;
 var GRAVITATIONAL_CONSTANT = 0.05;
 var PLANE_ATTRACTION_COEFF = 40;
 var TOP = 75;
