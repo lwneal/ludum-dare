@@ -23,7 +23,6 @@ var PLANE_ATTRACTION_COEFF = 40;
 var TOP = 75;
 var BOTTOM = -75;
 var BOUNDS = {x: -1000, y: -1000, width: 2000, height: 2000};
-var quadtree = new Quadtree(BOUNDS);
 
 var NO_LOSE = false;
 
