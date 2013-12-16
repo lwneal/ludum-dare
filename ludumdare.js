@@ -27,6 +27,9 @@ var NO_LOSE = false;
 
 init();
 
+function signOf(x) {
+  return x > 0 ? 1 : -1;
+}
 
 function spawn_enemy_missile() {
   var em = new Missile(false);
