@@ -40,17 +40,16 @@ var PlayerShip = (function(){
 
     var ship_forward = new THREE.Vector3(0, 0, -1);
     ship_forward.applyQuaternion(this.mesh.quaternion);
-    ship_forward.multiplyScalar(scale * 100.0);
+    ship_forward.multiplyScalar(scale * 125.0);
 
     this.mesh.position.add(ship_forward);
 
-    if (DEBUG) {
-        if (keyboard.pressed('W')) {
+    ship_forward.multiplyScalar(0.25);
+    if (keyboard.pressed('W')) {
         this.mesh.position.add(ship_forward);
-        }
-        if (keyboard.pressed('S')) {
+    }
+    if (keyboard.pressed('S')) {
         this.mesh.position.add(ship_forward.negate());
-        }
     }
 
     if (keyboard.pressed('space')) {
