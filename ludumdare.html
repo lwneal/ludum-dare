@@ -24,7 +24,7 @@
         position: absolute;
       }
 
-      #missile_ind {
+      .missile_ind {
         width: 50px;
         height: 50px;
         border: solid 1px #FFC000;
@@ -32,7 +32,7 @@
         position: absolute;
       }
 
-      #missile_bind {
+      .missile_bind {
         width: 0px;
         height: 0px;
         bottom: 0;
@@ -78,8 +78,13 @@
     <div id="overlay">&nbsp;</div>
     <div id="left_text">Shields: <span class="blink">1%</span></div>
     <div id="right_text">Ammunition: 1</div>
-    <div id="missile_ind">&nbsp;</div>
-    <div id="missile_bind">&nbsp;</div>
+    <div id="indicators">
+    <div class="missile_ind" id="missile_ind_0">&nbsp;</div>
+    <div class="missile_bind" id="missile_bind_0">&nbsp;</div>
+    <div class="missile_ind" id="missile_ind_1">&nbsp;</div>
+    <div class="missile_bind" id="missile_bind_1">&nbsp;</div>
+    <div class="missile_ind" id="missile_ind_2">&nbsp;</div>
+    <div class="missile_bind" id="missile_bind_2">&nbsp;</div>
     <div id="container"></div>
 
     <audio src="assets/Rolemusic_-_05_-_Death_on_the_battlefield.ogg" autoplay loop></audio>

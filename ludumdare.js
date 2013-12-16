@@ -17,7 +17,7 @@ var missiles = [];
 var INITIAL_ENEMY_DISTANCE = 1000;
 var ENEMY_SPEED = 115;
 // he only gets one too
-var NUM_ENEMY_MISSILES = 1;
+var NUM_ENEMY_MISSILES = 3;
 var GRAVITATIONAL_CONSTANT = 0.05;
 var PLANE_ATTRACTION_COEFF = 40;
 var TOP = 75;
@@ -175,13 +175,14 @@ function animate(timestamp) {
   PlayerShip.update(scale);
   AsteroidField.update(scale);
   TargetEnemy.update(scale);
+  var i = 0;
   _.each(missiles, function(m) {
     m.update(scale);
     if (m.friendly) return;
 
     // Update missile indicator
-    var fel = $('#missile_ind');
-    var bel = $('#missile_bind');
+    var fel = $('#missile_ind_' + i);
+    var bel = $('#missile_bind_' + i);
     if (onscreen(m.mesh)) {
       var coords = screen_coords(m.mesh);
       if (fel !== null && bel !== null) {
@@ -207,6 +208,7 @@ function animate(timestamp) {
         bel.css('border-top-color', 'hsl(0, ' + sat + '%, 50%)');
       }
     }
+    i++;
   });
   Stars.update(scale);
 
