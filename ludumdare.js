@@ -232,6 +232,11 @@ function animate(timestamp) {
       if (o.type() == "asteroid") {
         scene.remove(m.mesh);
         delete missiles[ix_m];
+        // Remove particles
+        var zero = new THREE.Vector3();
+        for (var i = 0; i < m.particles.geometry.vertices.length; i++) {
+          m.particles.geometry.vertices[i].copy(zero);
+        }
 
         // If it's the player's missile, end the game
         if (m.friendly && !NO_LOSE) {
