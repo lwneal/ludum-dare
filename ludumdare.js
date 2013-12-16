@@ -178,24 +178,28 @@ function animate(timestamp) {
     var bel = $('#missile_bind');
     if (onscreen(m.mesh)) {
       var coords = screen_coords(m.mesh);
-      fel.css('display', 'block');
-      bel.css('display', 'none');
-      fel.css('left', (coords.left - fel.width() / 2) + 'px')
-         .css('top', (coords.top - fel.height() / 2) + 'px');
+      if (fel !== null && bel !== null) {
+        fel.css('display', 'block');
+        bel.css('display', 'none');
+        fel.css('left', (coords.left - fel.width() / 2) + 'px')
+            .css('top', (coords.top - fel.height() / 2) + 'px');
+      }
     }
     else {
-      fel.css('display', 'none');
-      bel.css('display', 'block');
-      var to_m = new THREE.Vector3().subVectors(m.mesh.position, PlayerShip.mesh.position);
-      var dist = to_m.length();
-      to_m.normalize();
-      var x = ((to_m.x + 1) / 2) * window.innerWidth;
+      if (fel !== null && bel !== null) {
+        fel.css('display', 'none');
+        bel.css('display', 'block');
+        var to_m = new THREE.Vector3().subVectors(m.mesh.position, PlayerShip.mesh.position);
+        var dist = to_m.length();
+        to_m.normalize();
+        var x = ((to_m.x + 1) / 2) * window.innerWidth;
 
-      bel.css('left', (x - bel.width() / 2) + 'px');
-      var sat = 100*(dist / 600.0);
-      if (sat > 100) sat = 100;
-      if (sat < 0) sat = 0;
-      bel.css('border-top-color', 'hsl(0, ' + sat + '%, 50%)');
+        bel.css('left', (x - bel.width() / 2) + 'px');
+        var sat = 100*(dist / 600.0);
+        if (sat > 100) sat = 100;
+        if (sat < 0) sat = 0;
+        bel.css('border-top-color', 'hsl(0, ' + sat + '%, 50%)');
+      }
     }
   });
   Stars.update(scale);
@@ -274,7 +278,7 @@ function screen_coords(mesh) {
   // projectVector will translate position to 2d
   v = new THREE.Projector().projectVector(p, camera);
 
-  if (v.z < 0) return null;
+  if (v.z < 0) return {left: -1000, top: -1000};
 
   // translate our vector so that percX=0 represents
   // the left edge, percX=1 is the right edge,
