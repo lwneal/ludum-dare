@@ -17,7 +17,7 @@ function vecDistanceSq(a, b) {
 }
 
 function isTooCloseToOrigin(position) {
-  var DIST = 200;
+  var DIST = 100;
   return -DIST < position.x && position.x < DIST
     && -DIST < position.z && position.z < DIST;
 }
@@ -32,14 +32,14 @@ function Asteroid() {
   this.type = function() { return "asteroid"; };
   this.bounds = {obj: this};
   this.respawn = function() {
-    var spawnDirection = new THREE.Vector3(rand(-1,1), rand(-0.1, -0.1), rand(-1,1));
+    var spawnDirection = new THREE.Vector3(rand(-1,1), 0, rand(-1,1));
     spawnDirection.normalize();
     spawnDirection.multiplyScalar(ASTEROID_SPAWN_DIST);
 
     this.mesh.position.copy(PlayerShip.mesh.position);
     this.mesh.position.add(spawnDirection);
 
-    this.v = randVect(0, 40);
+    this.v = randVect(0, 50);
     this.rv = randVect(0, 1);
   };
 
