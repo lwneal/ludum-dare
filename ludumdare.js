@@ -9,6 +9,7 @@ var container, stats, keyboard;
 
 var camera, controls, scene, renderer;
 var overlay_scene, overlay_camera;
+var meshPlanet;
 
 var clock = new THREE.Clock();
 
@@ -23,6 +24,7 @@ var PLANE_ATTRACTION_COEFF = 40;
 var TOP = 75;
 var BOTTOM = -75;
 var BOUNDS = {x: -1000, y: -1000, width: 2000, height: 2000};
+var EARTH_DISTANCE = -4500;
 
 var NO_LOSE = false;
 
@@ -65,6 +67,20 @@ function init() {
   scene.add( ambientLight );
 
   overlay_scene.add(new THREE.AmbientLight(0xFFFFFF));
+
+  var planetGeometry = new THREE.SphereGeometry( 1000, 100, 50 );
+  var planetTexture   = THREE.ImageUtils.loadTexture( "assets/earth_atmos_2048.jpg" );
+  var planetMaterial = new THREE.MeshPhongMaterial( {
+    fog: false,
+    map: planetTexture
+  });
+  
+  meshPlanet = new THREE.Mesh( planetGeometry, planetMaterial );
+  meshPlanet.rotation.y = 0;
+  meshPlanet.rotation.z = 0.1;
+  meshPlanet.position.z = -3000;
+  scene.add( meshPlanet );
+  
 
   var directionalLight = new THREE.DirectionalLight( 0x555555, 2 );
   directionalLight.position.set( 1, 1, 0.5 ).normalize();
@@ -167,6 +183,10 @@ var last_time = null;
 function animate(timestamp) {
 
   requestAnimationFrame( animate );
+
+  meshPlanet.rotation.y += 0.001;
+  meshPlanet.position.z = PlayerShip.mesh.position.z + EARTH_DISTANCE;
+  meshPlanet.position.y = PlayerShip.mesh.position.y + EARTH_DISTANCE/2;
 
   if (last_time === null) last_time = timestamp;
   var scale = (timestamp - last_time) / 1000.0;
