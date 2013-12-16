@@ -16,6 +16,8 @@ var asteroids = [];
 var missiles = [];
 var INITIAL_ENEMY_DISTANCE = 1000;
 var ENEMY_SPEED = 115;
+// he only gets one too
+var NUM_ENEMY_MISSILES = 1;
 var GRAVITATIONAL_CONSTANT = 0.1;
 var PLANE_ATTRACTION_COEFF = 40;
 var TOP = 75;
@@ -34,7 +36,7 @@ function signOf(x) {
 function spawn_enemy_missile() {
   var em = new Missile(false);
 
-  em.mesh.position = PlayerShip.mesh.position.clone();
+  em.mesh.position = TargetEnemy.mesh.position.clone();
 
   em.mesh.position.x += signOf(Math.random() - 0.5) * rand(150, 350);
   em.mesh.position.z -= signOf(Math.random() - 0.5) * rand(150, 350);
@@ -106,7 +108,9 @@ function init() {
 
     TargetEnemy.init("target_ship");
 
-    spawn_enemy_missile();
+    for (var i = 0; i < NUM_ENEMY_MISSILES; i++) {
+      spawn_enemy_missile();
+    }
 
     //missiles.push(new Missile(true));
 

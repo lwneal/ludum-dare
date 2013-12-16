@@ -119,17 +119,17 @@ function asteroidCollide(ast, bst) {
       ast.mesh.position.z - bst.mesh.position.z);
   diff.normalize();
 
-  ast.vx += bstmass / astmass * diff.x / 10;
-  ast.vy += bstmass / astmass * diff.y / 10;
-  ast.vz += bstmass / astmass * diff.z / 10;
+  ast.v.x += bstmass / astmass * diff.x / 10;
+  ast.v.y += bstmass / astmass * diff.y / 10;
+  ast.v.z += bstmass / astmass * diff.z / 10;
 
-  ast.rvx += Math.random() - 0.5;
-  ast.rvy += Math.random() - 0.5;
-  ast.rvz += Math.random() - 0.5;
+  ast.rv.x += Math.random() - 0.5;
+  ast.rv.y += Math.random() - 0.5;
+  ast.rv.z += Math.random() - 0.5;
 
-  ast.rvx *= 0.9;
-  ast.rvy *= 0.9;
-  ast.rvz *= 0.9;
+  ast.rv.x *= 0.9;
+  ast.rv.y *= 0.9;
+  ast.rv.z *= 0.9;
 }
 
 function asteroidInteract(ast, bst, scale) {
