@@ -58,12 +58,25 @@
         bottom: 5px;
         right: 5px;
       }
+      @keyframes blink {  
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      @-webkit-keyframes blink {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      .blink {
+        -webkit-animation: blink 0.5s linear infinite;
+        -moz-animation: blink 0.5s linear infinite;
+        animation: blink 0.5s linear infinite;
+      } 
     </style>
   </head>
   <body>
 
     <div id="overlay">&nbsp;</div>
-    <div id="left_text">Shields: 1%</div>
+    <div id="left_text">Shields: <span class="blink">1%</span></div>
     <div id="right_text">Ammunition: 1</div>
     <div id="missile_ind">&nbsp;</div>
     <div id="missile_bind">&nbsp;</div>
